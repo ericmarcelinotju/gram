@@ -1,0 +1,1044 @@
+definitions:
+  auth.ForgotPasswordValidator:
+    properties:
+      email:
+        type: string
+      username:
+        type: string
+    required:
+    - email
+    - username
+    type: object
+  auth.LoginValidator:
+    properties:
+      password:
+        type: string
+      remember_me:
+        type: boolean
+      username:
+        type: string
+    required:
+    - password
+    - username
+    type: object
+  dto.IdParam:
+    properties:
+      id:
+        type: string
+    required:
+    - id
+    type: object
+  dto.ListLogResponse:
+    properties:
+      logs:
+        items:
+          $ref: '#/definitions/dto.LogResponse'
+        type: array
+    type: object
+  dto.ListPermissionResponse:
+    properties:
+      permissions:
+        items:
+          $ref: '#/definitions/dto.PermissionResponse'
+        type: array
+      total:
+        type: integer
+    type: object
+  dto.ListRoleResponse:
+    properties:
+      roles:
+        items:
+          $ref: '#/definitions/dto.RoleResponse'
+        type: array
+      total:
+        type: integer
+    type: object
+  dto.ListSettingResponse:
+    properties:
+      settings:
+        items:
+          $ref: '#/definitions/dto.SettingResponse'
+        type: array
+    type: object
+  dto.ListUserResponse:
+    properties:
+      total:
+        type: integer
+      users:
+        items:
+          $ref: '#/definitions/dto.UserResponse'
+        type: array
+    type: object
+  dto.LogResponse:
+    properties:
+      content:
+        type: string
+      created_at:
+        type: string
+      id:
+        type: string
+      level:
+        type: string
+      subject:
+        type: string
+      title:
+        type: string
+      type:
+        type: string
+    type: object
+  dto.LoginResponse:
+    properties:
+      token:
+        type: string
+      user:
+        $ref: '#/definitions/dto.UserResponse'
+    type: object
+  dto.PermissionResponse:
+    properties:
+      created_at:
+        type: string
+      deleted_at:
+        type: string
+      description:
+        type: string
+      id:
+        type: string
+      method:
+        type: string
+      module:
+        type: string
+      updated_at:
+        type: string
+    type: object
+  dto.RoleResponse:
+    properties:
+      created_at:
+        type: string
+      deleted_at:
+        type: string
+      description:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+      permissions:
+        items:
+          $ref: '#/definitions/dto.PermissionResponse'
+        type: array
+      updated_at:
+        type: string
+    type: object
+  dto.SettingResponse:
+    properties:
+      name:
+        type: string
+      value:
+        type: string
+    type: object
+  dto.UserResponse:
+    properties:
+      avatar:
+        type: string
+      created_at:
+        type: string
+      department:
+        type: string
+      email:
+        type: string
+      first_name:
+        type: string
+      id:
+        type: string
+      last_login:
+        type: string
+      last_name:
+        type: string
+      role:
+        $ref: '#/definitions/dto.RoleResponse'
+      role_id:
+        type: string
+      role_name:
+        type: string
+      title:
+        type: string
+      updated_at:
+        type: string
+      username:
+        type: string
+    type: object
+  http.SetResponse:
+    properties:
+      accessTime:
+        type: string
+      code:
+        type: integer
+      data: {}
+      status:
+        type: string
+    type: object
+  log.PostLogPayload:
+    properties:
+      content:
+        type: string
+      level:
+        enum:
+        - info
+        - success
+        - warning
+        - danger
+        type: string
+      subject:
+        type: string
+      title:
+        type: string
+      type:
+        enum:
+        - event
+        - system
+        type: string
+    required:
+    - title
+    type: object
+  media.FilePayload:
+    type: object
+  permission.PostPermissionPayload:
+    properties:
+      description:
+        type: string
+      method:
+        type: string
+      module:
+        type: string
+    required:
+    - method
+    - module
+    type: object
+  permission.PutPermissionPayload:
+    properties:
+      description:
+        type: string
+      method:
+        type: string
+      module:
+        type: string
+    type: object
+  role.PostRolePayload:
+    properties:
+      description:
+        type: string
+      name:
+        type: string
+      permissions:
+        items:
+          $ref: '#/definitions/dto.IdParam'
+        type: array
+    required:
+    - name
+    type: object
+  role.PutRolePayload:
+    properties:
+      description:
+        type: string
+      name:
+        type: string
+      permissions:
+        items:
+          $ref: '#/definitions/dto.IdParam'
+        type: array
+    type: object
+  setting.SettingPayload:
+    properties:
+      name:
+        type: string
+      value:
+        type: string
+    type: object
+  user.PostUserPayload:
+    properties:
+      confirm_password:
+        type: string
+      department:
+        type: string
+      email:
+        type: string
+      first_name:
+        type: string
+      last_name:
+        type: string
+      password:
+        type: string
+      role_id:
+        type: string
+      title:
+        type: string
+      username:
+        minLength: 2
+        type: string
+    required:
+    - email
+    - password
+    - role_id
+    - username
+    type: object
+  user.PutUserPayload:
+    properties:
+      confirm_password:
+        type: string
+      department:
+        type: string
+      email:
+        type: string
+      first_name:
+        type: string
+      last_name:
+        type: string
+      password:
+        type: string
+      role_id:
+        type: string
+      title:
+        type: string
+      username:
+        minLength: 2
+        type: string
+    required:
+    - role_id
+    type: object
+info:
+  contact: {}
+paths:
+  /auth/forgot-password:
+    post:
+      consumes:
+      - application/json
+      description: ForgotPassword using email to generate token for reset password
+      parameters:
+      - description: Login Credential
+        in: body
+        name: credential
+        required: true
+        schema:
+          $ref: '#/definitions/auth.ForgotPasswordValidator'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/http.SetResponse'
+      summary: ForgotPassword
+      tags:
+      - Auth
+  /auth/login:
+    post:
+      consumes:
+      - application/json
+      description: Login using email and password to generate token for auth
+      parameters:
+      - description: Login Credential
+        in: body
+        name: credential
+        required: true
+        schema:
+          $ref: '#/definitions/auth.LoginValidator'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.SetResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/dto.LoginResponse'
+              type: object
+      summary: Login
+      tags:
+      - Auth
+  /auth/logout:
+    post:
+      consumes:
+      - application/json
+      description: Logout the current user determined by it's auth token
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.SetResponse'
+            - properties:
+                data:
+                  type: string
+              type: object
+      security:
+      - Auth: []
+      summary: Logout
+      tags:
+      - Auth
+  /log:
+    get:
+      consumes:
+      - application/json
+      description: Get list of logs
+      parameters:
+      - enum:
+        - info
+        - success
+        - warning
+        - danger
+        in: query
+        name: level
+        type: string
+      - in: query
+        name: title
+        type: string
+      - enum:
+        - event
+        - system
+        in: query
+        name: type
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.SetResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/dto.ListLogResponse'
+              type: object
+      security:
+      - Auth: []
+      summary: Get list of logs
+      tags:
+      - Log
+    post:
+      consumes:
+      - application/json
+      description: Create new log
+      parameters:
+      - description: Log Data
+        in: body
+        name: log
+        required: true
+        schema:
+          $ref: '#/definitions/log.PostLogPayload'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.SetResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/dto.LogResponse'
+              type: object
+      security:
+      - Auth: []
+      summary: Post new log
+      tags:
+      - Log
+  /log/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete log by id
+      parameters:
+      - description: Log ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/http.SetResponse'
+      security:
+      - Auth: []
+      summary: Delete log by id
+      tags:
+      - Log
+    get:
+      consumes:
+      - application/json
+      description: Get log's detail
+      parameters:
+      - description: Log ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.SetResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/dto.LogResponse'
+              type: object
+      security:
+      - Auth: []
+      summary: Get log's detail
+      tags:
+      - Log
+  /media:
+    post:
+      consumes:
+      - multipart/form-data
+      description: Upload file
+      parameters:
+      - description: File Data
+        in: body
+        name: file
+        required: true
+        schema:
+          $ref: '#/definitions/media.FilePayload'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/http.SetResponse'
+      security:
+      - Auth: []
+      summary: Upload file
+      tags:
+      - Media
+  /permission:
+    get:
+      consumes:
+      - application/json
+      description: Get list of permissions
+      parameters:
+      - in: query
+        name: id
+        type: string
+      - in: query
+        minimum: 1
+        name: limit
+        type: integer
+      - in: query
+        name: method
+        type: string
+      - in: query
+        name: module
+        type: string
+      - in: query
+        minimum: 1
+        name: page
+        type: integer
+      - in: query
+        name: sort
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.SetResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/dto.ListPermissionResponse'
+              type: object
+      security:
+      - Auth: []
+      summary: Get list of permissions
+      tags:
+      - Permission
+    post:
+      consumes:
+      - application/json
+      description: Create new permission
+      parameters:
+      - description: Permission Data
+        in: body
+        name: permission
+        required: true
+        schema:
+          $ref: '#/definitions/permission.PostPermissionPayload'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.SetResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/dto.PermissionResponse'
+              type: object
+      security:
+      - Auth: []
+      summary: Post new permission
+      tags:
+      - Permission
+  /permission/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete permission by id
+      parameters:
+      - description: Permission ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/http.SetResponse'
+      security:
+      - Auth: []
+      summary: Delete permission by id
+      tags:
+      - Permission
+    get:
+      consumes:
+      - application/json
+      description: Get permission's detail
+      parameters:
+      - description: Permission ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.SetResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/dto.PermissionResponse'
+              type: object
+      security:
+      - Auth: []
+      summary: Get permission's detail
+      tags:
+      - Permission
+    put:
+      consumes:
+      - application/json
+      description: Update permission datas
+      parameters:
+      - description: Permission ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Permission Data
+        in: body
+        name: permission
+        required: true
+        schema:
+          $ref: '#/definitions/permission.PutPermissionPayload'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.SetResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/dto.PermissionResponse'
+              type: object
+      security:
+      - Auth: []
+      summary: Put permission
+      tags:
+      - Permission
+  /role:
+    get:
+      consumes:
+      - application/json
+      description: Get list of roles
+      parameters:
+      - in: query
+        name: id
+        type: string
+      - in: query
+        minimum: 1
+        name: limit
+        type: integer
+      - in: query
+        name: name
+        type: string
+      - in: query
+        minimum: 1
+        name: page
+        type: integer
+      - in: query
+        name: sort
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.SetResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/dto.ListRoleResponse'
+              type: object
+      security:
+      - Auth: []
+      summary: Get list of roles
+      tags:
+      - Role
+    post:
+      consumes:
+      - application/json
+      description: Create new role
+      parameters:
+      - description: Role Data
+        in: body
+        name: role
+        required: true
+        schema:
+          $ref: '#/definitions/role.PostRolePayload'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.SetResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/dto.RoleResponse'
+              type: object
+      security:
+      - Auth: []
+      summary: Post new role
+      tags:
+      - Role
+  /role/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete role by id
+      parameters:
+      - description: Role ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/http.SetResponse'
+      security:
+      - Auth: []
+      summary: Delete role by id
+      tags:
+      - Role
+    get:
+      consumes:
+      - application/json
+      description: Get role's detail
+      parameters:
+      - description: Role ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.SetResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/dto.RoleResponse'
+              type: object
+      security:
+      - Auth: []
+      summary: Get role's detail
+      tags:
+      - Role
+    put:
+      consumes:
+      - application/json
+      description: Update role datas
+      parameters:
+      - description: Role ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Role Data
+        in: body
+        name: role
+        required: true
+        schema:
+          $ref: '#/definitions/role.PutRolePayload'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.SetResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/dto.RoleResponse'
+              type: object
+      security:
+      - Auth: []
+      summary: Put role
+      tags:
+      - Role
+  /setting:
+    get:
+      consumes:
+      - application/json
+      description: Get list of settings
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.SetResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/dto.ListSettingResponse'
+              type: object
+      security:
+      - Auth: []
+      summary: Get list of settings
+      tags:
+      - Setting
+    post:
+      consumes:
+      - application/json
+      description: Create new setting
+      parameters:
+      - description: Setting Data
+        in: body
+        name: setting
+        required: true
+        schema:
+          $ref: '#/definitions/setting.SettingPayload'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.SetResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/dto.SettingResponse'
+              type: object
+      security:
+      - Auth: []
+      summary: Post new setting
+      tags:
+      - Setting
+  /user:
+    get:
+      consumes:
+      - application/json
+      description: Get list of users
+      parameters:
+      - in: query
+        name: branch_id
+        type: string
+      - in: query
+        name: email
+        type: string
+      - in: query
+        name: id
+        type: string
+      - in: query
+        minimum: 1
+        name: limit
+        type: integer
+      - in: query
+        minimum: 1
+        name: page
+        type: integer
+      - in: query
+        name: role_id
+        type: string
+      - in: query
+        name: sort
+        type: string
+      - in: query
+        name: username
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.SetResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/dto.ListUserResponse'
+              type: object
+      security:
+      - Auth: []
+      summary: Get list of users
+      tags:
+      - User
+    post:
+      consumes:
+      - multipart/form-data
+      description: Create new user
+      parameters:
+      - description: User Data
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/user.PostUserPayload'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.SetResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/dto.UserResponse'
+              type: object
+      security:
+      - Auth: []
+      summary: Post new user
+      tags:
+      - User
+  /user/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete user by id
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/http.SetResponse'
+      security:
+      - Auth: []
+      summary: Delete user by id
+      tags:
+      - User
+    get:
+      consumes:
+      - application/json
+      description: Get user's detail
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.SetResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/dto.UserResponse'
+              type: object
+      security:
+      - Auth: []
+      summary: Get user's detail
+      tags:
+      - User
+    put:
+      consumes:
+      - application/json
+      description: Update user datas
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: User Data
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/user.PutUserPayload'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.SetResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/dto.UserResponse'
+              type: object
+      security:
+      - Auth: []
+      summary: Put user
+      tags:
+      - User
+securityDefinitions:
+  Auth:
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"

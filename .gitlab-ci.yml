@@ -1,0 +1,46 @@
+image: golang:1.16
+
+cache:
+  paths:
+    - /go/src/github.com
+    - /go/src/golang.org
+    - /go/src/google.golang.org
+    - /go/src/gopkg.in
+
+stages:
+  - build
+  - deploy
+
+build:
+  stage: build
+  artifacts:
+    expire_in: 1 day
+    paths:
+      - doppler
+  script:
+    - mkdir -p /go/src/gitlab.com/datis /go/src/_/builds
+    - cp -r $CI_PROJECT_DIR /go/src/gitlab.com/firelogik/helios
+    - ln -s /go/src/gitlab.com/datis /go/src/_/builds/datis
+    - make dep
+    - make build
+  only:
+    - staging
+    - production
+
+deploy-staging:
+  image: alpine
+  stage: deploy
+  script:
+    - "which ssh-agent || ( apk update && apk add openssh-client )"
+    - eval $(ssh-agent -s)
+    - echo "$SSH_PRIVATE_KEY_STAGING" | tr -d '\r' | ssh-add -
+    - mkdir -p ~/.ssh
+    - chmod 700 ~/.ssh
+    - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
+    - ssh $CI_HOST_STAGING "sudo systemctl stop doppler.service"
+    - apk add rsync
+    - rsync -rav doppler $CI_HOST_STAGING:/home/firelogik/helios
+    - rsync -rav email/ $CI_HOST_STAGING:/home/firelogik/helios
+    - ssh $CI_HOST_STAGING "sudo systemctl start doppler.service"
+  only:
+    - staging

@@ -1,0 +1,16 @@
+vendor/
+/media/
+wkhtmltopdf/
+backend
+doppler
+temp_files
+.DS_Store
+.idea
+.vscode
+Gopkg.lock
+Gopkg.toml
+*.db
+*.exe
+*.apl
+*.env
+*.pdf
