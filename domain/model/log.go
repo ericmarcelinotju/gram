@@ -3,9 +3,9 @@ package model
 import (
 	"time"
 
-	"gitlab.com/firelogik/helios/constant/enums"
-	dto "gitlab.com/firelogik/helios/router/http/dto/responses"
-	timeUtils "gitlab.com/firelogik/helios/utils/time"
+	"github.com/ericmarcelinotju/gram/constant/enums"
+	dto "github.com/ericmarcelinotju/gram/router/http/dto/responses"
+	timeUtils "github.com/ericmarcelinotju/gram/utils/time"
 )
 
 // Log struct defines the response model for a log APIs.

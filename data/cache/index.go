@@ -4,8 +4,8 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/ericmarcelinotju/gram/config"
 	"github.com/go-redis/redis/v8"
-	"gitlab.com/firelogik/helios/config"
 )
 
 func ConnectRedis(configuration *config.Cache) (Cache, error) {

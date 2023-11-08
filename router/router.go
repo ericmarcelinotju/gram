@@ -10,32 +10,32 @@ import (
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 
-	"gitlab.com/firelogik/helios/data/job"
-	"gitlab.com/firelogik/helios/domain/media"
-	"gitlab.com/firelogik/helios/domain/module/auth"
-	logService "gitlab.com/firelogik/helios/domain/module/log"
-	"gitlab.com/firelogik/helios/domain/module/permission"
-	"gitlab.com/firelogik/helios/domain/module/role"
-	"gitlab.com/firelogik/helios/domain/module/setting"
-	"gitlab.com/firelogik/helios/domain/module/user"
-	"gitlab.com/firelogik/helios/domain/websocket"
-	healthRoutes "gitlab.com/firelogik/helios/router/http/health"
+	"github.com/ericmarcelinotju/gram/data/job"
+	"github.com/ericmarcelinotju/gram/domain/media"
+	"github.com/ericmarcelinotju/gram/domain/module/auth"
+	logService "github.com/ericmarcelinotju/gram/domain/module/log"
+	"github.com/ericmarcelinotju/gram/domain/module/permission"
+	"github.com/ericmarcelinotju/gram/domain/module/role"
+	"github.com/ericmarcelinotju/gram/domain/module/setting"
+	"github.com/ericmarcelinotju/gram/domain/module/user"
+	"github.com/ericmarcelinotju/gram/domain/websocket"
+	healthRoutes "github.com/ericmarcelinotju/gram/router/http/health"
 
-	authRoutes "gitlab.com/firelogik/helios/router/http/auth"
-	mediaRoutes "gitlab.com/firelogik/helios/router/http/media"
-	permissionRoutes "gitlab.com/firelogik/helios/router/http/permission"
-	roleRoutes "gitlab.com/firelogik/helios/router/http/role"
-	userRoutes "gitlab.com/firelogik/helios/router/http/user"
+	authRoutes "github.com/ericmarcelinotju/gram/router/http/auth"
+	mediaRoutes "github.com/ericmarcelinotju/gram/router/http/media"
+	permissionRoutes "github.com/ericmarcelinotju/gram/router/http/permission"
+	roleRoutes "github.com/ericmarcelinotju/gram/router/http/role"
+	userRoutes "github.com/ericmarcelinotju/gram/router/http/user"
 
-	logRoutes "gitlab.com/firelogik/helios/router/http/log"
-	settingRoutes "gitlab.com/firelogik/helios/router/http/setting"
+	logRoutes "github.com/ericmarcelinotju/gram/router/http/log"
+	settingRoutes "github.com/ericmarcelinotju/gram/router/http/setting"
 
-	swaggerRoutes "gitlab.com/firelogik/helios/router/http/swagger"
-	websocketRoutes "gitlab.com/firelogik/helios/router/websocket"
+	swaggerRoutes "github.com/ericmarcelinotju/gram/router/http/swagger"
+	websocketRoutes "github.com/ericmarcelinotju/gram/router/websocket"
 
-	"gitlab.com/firelogik/helios/router/middleware"
+	"github.com/ericmarcelinotju/gram/router/middleware"
 
-	response "gitlab.com/firelogik/helios/utils/http"
+	response "github.com/ericmarcelinotju/gram/utils/http"
 )
 
 // NewHTTPHandler returns the HTTP requests handler

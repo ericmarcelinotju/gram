@@ -7,10 +7,10 @@ import (
 	"mime/multipart"
 	"time"
 
+	"github.com/ericmarcelinotju/gram/config"
+	"github.com/ericmarcelinotju/gram/data/storage"
+	domainErrors "github.com/ericmarcelinotju/gram/domain/errors"
 	"github.com/google/uuid"
-	"gitlab.com/firelogik/helios/config"
-	"gitlab.com/firelogik/helios/data/storage"
-	domainErrors "gitlab.com/firelogik/helios/domain/errors"
 )
 
 type Store struct {

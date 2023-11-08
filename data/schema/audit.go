@@ -3,8 +3,8 @@ package schema
 import (
 	"time"
 
+	"github.com/ericmarcelinotju/gram/domain/model"
 	"github.com/google/uuid"
-	"gitlab.com/firelogik/helios/domain/model"
 )
 
 // Audit struct defines the database model for a audit.

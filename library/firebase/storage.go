@@ -8,7 +8,7 @@ import (
 	"time"
 
 	googleStorage "cloud.google.com/go/storage"
-	"gitlab.com/firelogik/helios/config"
+	"github.com/ericmarcelinotju/gram/config"
 )
 
 type Storage struct {

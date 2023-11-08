@@ -3,7 +3,7 @@ package database
 import (
 	"fmt"
 
-	"gitlab.com/firelogik/helios/config"
+	"github.com/ericmarcelinotju/gram/config"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"

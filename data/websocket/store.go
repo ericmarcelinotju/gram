@@ -1,9 +1,9 @@
 package websocket
 
 import (
+	domain "github.com/ericmarcelinotju/gram/domain/websocket"
+	ws "github.com/ericmarcelinotju/gram/library/websocket"
 	"github.com/gorilla/websocket"
-	domain "gitlab.com/firelogik/helios/domain/websocket"
-	ws "gitlab.com/firelogik/helios/library/websocket"
 )
 
 type Store struct {

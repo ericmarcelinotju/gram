@@ -4,10 +4,10 @@ import (
 	"context"
 	"fmt"
 
-	"gitlab.com/firelogik/helios/config"
-	"gitlab.com/firelogik/helios/constant"
-	"gitlab.com/firelogik/helios/domain/module/setting"
-	"gitlab.com/firelogik/helios/library/file"
+	"github.com/ericmarcelinotju/gram/config"
+	"github.com/ericmarcelinotju/gram/constant"
+	"github.com/ericmarcelinotju/gram/domain/module/setting"
+	"github.com/ericmarcelinotju/gram/library/file"
 )
 
 func InitFile(configuration *config.Storage) (*file.File, error) {

@@ -1,10 +1,10 @@
 package log
 
 import (
+	"github.com/ericmarcelinotju/gram/constant/enums"
+	"github.com/ericmarcelinotju/gram/domain/model"
+	"github.com/ericmarcelinotju/gram/router/http/dto"
 	"github.com/gin-gonic/gin"
-	"gitlab.com/firelogik/helios/constant/enums"
-	"gitlab.com/firelogik/helios/domain/model"
-	"gitlab.com/firelogik/helios/router/http/dto"
 )
 
 type PostLogPayload struct {

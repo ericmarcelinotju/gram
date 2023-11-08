@@ -3,8 +3,8 @@ package health
 import (
 	"time"
 
+	response "github.com/ericmarcelinotju/gram/utils/http"
 	"github.com/gin-gonic/gin"
-	response "gitlab.com/firelogik/helios/utils/http"
 )
 
 // NewRoutesFactory create and returns a factory to create routes to check API health

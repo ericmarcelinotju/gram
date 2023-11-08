@@ -4,8 +4,8 @@ import (
 	"errors"
 	"time"
 
+	"github.com/ericmarcelinotju/gram/domain/model"
 	"github.com/gin-gonic/gin"
-	"gitlab.com/firelogik/helios/domain/model"
 )
 
 func GetUser(c *gin.Context) (*model.User, error) {

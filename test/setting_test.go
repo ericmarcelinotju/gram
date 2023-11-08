@@ -7,11 +7,11 @@ import (
 	"net/http/httptest"
 	"testing"
 
+	dto "github.com/ericmarcelinotju/gram/router/http/dto/responses"
+	"github.com/ericmarcelinotju/gram/router/http/setting"
 	"github.com/go-playground/assert/v2"
-	dto "gitlab.com/firelogik/helios/router/http/dto/responses"
-	"gitlab.com/firelogik/helios/router/http/setting"
 
-	response "gitlab.com/firelogik/helios/utils/http"
+	response "github.com/ericmarcelinotju/gram/utils/http"
 )
 
 func TestListSettingHandler(t *testing.T) {

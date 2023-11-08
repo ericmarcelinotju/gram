@@ -6,8 +6,8 @@ import (
 	"time"
 
 	"github.com/adjust/rmq/v4"
+	"github.com/ericmarcelinotju/gram/config"
 	"github.com/go-redis/redis/v8"
-	"gitlab.com/firelogik/helios/config"
 )
 
 type Queue struct {

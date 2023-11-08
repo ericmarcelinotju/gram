@@ -1,11 +1,11 @@
 package swagger
 
 import (
+	"github.com/ericmarcelinotju/gram/config"
+	docs "github.com/ericmarcelinotju/gram/docs"
 	"github.com/gin-gonic/gin"
 	swaggerfiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
-	"gitlab.com/firelogik/helios/config"
-	docs "gitlab.com/firelogik/helios/docs"
 )
 
 // NewRoutesFactory create and returns a factory to create routes for the panelment

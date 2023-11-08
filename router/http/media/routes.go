@@ -1,8 +1,8 @@
 package media
 
 import (
+	"github.com/ericmarcelinotju/gram/domain/media"
 	"github.com/gin-gonic/gin"
-	"gitlab.com/firelogik/helios/domain/media"
 )
 
 // NewRoutesFactory create and returns a factory to create routes for the panelment

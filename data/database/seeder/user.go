@@ -1,9 +1,9 @@
 package seeder
 
 import (
+	"github.com/ericmarcelinotju/gram/data/schema"
+	"github.com/ericmarcelinotju/gram/utils/crypt"
 	"github.com/google/uuid"
-	"gitlab.com/firelogik/helios/data/schema"
-	"gitlab.com/firelogik/helios/utils/crypt"
 	"gorm.io/gorm"
 )
 

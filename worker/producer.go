@@ -1,12 +1,12 @@
-package backup
+package worker
 
 import (
 	"context"
 
-	"gitlab.com/firelogik/helios/constant/enums"
-	"gitlab.com/firelogik/helios/data/job"
-	"gitlab.com/firelogik/helios/domain/model"
-	logDomain "gitlab.com/firelogik/helios/domain/module/log"
+	"github.com/ericmarcelinotju/gram/constant/enums"
+	"github.com/ericmarcelinotju/gram/data/job"
+	"github.com/ericmarcelinotju/gram/domain/model"
+	logDomain "github.com/ericmarcelinotju/gram/domain/module/log"
 )
 
 // NewProducerFactory create and returns a factory to create routes for the panelment
@@ -20,7 +20,7 @@ func NewProducerFactory(logSvc logDomain.Service) func(ctx context.Context) ([]j
 
 func CreateProduceLog(logSvc logDomain.Service, ctx context.Context, subject, content string, level enums.LogLevel) {
 	logSvc.CreateLog(ctx, &model.Log{
-		Title:   "Backup Scheduler Producer Problem",
+		Title:   "Scheduler Producer Problem",
 		Subject: subject,
 		Content: content,
 		Level:   level,

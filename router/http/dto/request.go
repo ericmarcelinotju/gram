@@ -5,8 +5,8 @@ import (
 	"mime/multipart"
 	"strings"
 
+	"github.com/ericmarcelinotju/gram/domain/model"
 	"github.com/gin-gonic/gin"
-	"gitlab.com/firelogik/helios/domain/model"
 )
 
 type IdParam struct {

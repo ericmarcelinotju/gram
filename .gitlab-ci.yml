@@ -19,7 +19,7 @@ build:
       - doppler
   script:
     - mkdir -p /go/src/gitlab.com/datis /go/src/_/builds
-    - cp -r $CI_PROJECT_DIR /go/src/gitlab.com/firelogik/helios
+    - cp -r $CI_PROJECT_DIR /go/src/github.com/ericmarcelinotju/gram
     - ln -s /go/src/gitlab.com/datis /go/src/_/builds/datis
     - make dep
     - make build

@@ -5,9 +5,9 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	"gitlab.com/firelogik/helios/domain/module/auth"
-	"gitlab.com/firelogik/helios/domain/module/user"
-	response "gitlab.com/firelogik/helios/utils/http"
+	"github.com/ericmarcelinotju/gram/domain/module/auth"
+	"github.com/ericmarcelinotju/gram/domain/module/user"
+	response "github.com/ericmarcelinotju/gram/utils/http"
 )
 
 // NewRoutesFactory create and returns a factory to create routes for the acknowledgement

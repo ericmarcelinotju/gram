@@ -1,7 +1,7 @@
 package schema
 
 import (
-	"gitlab.com/firelogik/helios/domain/model"
+	"github.com/ericmarcelinotju/gram/domain/model"
 )
 
 // Setting struct defines the database model for a setting.

@@ -6,7 +6,7 @@ import (
 	"github.com/google/uuid"
 	"gorm.io/gorm"
 
-	"gitlab.com/firelogik/helios/domain/model"
+	"github.com/ericmarcelinotju/gram/domain/model"
 )
 
 // Role struct defines the database model for a role.

@@ -3,9 +3,9 @@ package media
 import (
 	"net/http"
 
+	"github.com/ericmarcelinotju/gram/domain/media"
+	response "github.com/ericmarcelinotju/gram/utils/http"
 	"github.com/gin-gonic/gin"
-	"gitlab.com/firelogik/helios/domain/media"
-	response "gitlab.com/firelogik/helios/utils/http"
 )
 
 // UploadFile godoc

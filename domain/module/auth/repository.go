@@ -3,8 +3,8 @@ package auth
 import (
 	"context"
 
+	"github.com/ericmarcelinotju/gram/domain/model"
 	"github.com/gin-gonic/gin"
-	"gitlab.com/firelogik/helios/domain/model"
 )
 
 // Repository provides an abstraction on top of the building data source

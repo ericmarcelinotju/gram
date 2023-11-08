@@ -4,10 +4,10 @@ import (
 	"context"
 	"fmt"
 
-	"gitlab.com/firelogik/helios/domain/model"
-	"gitlab.com/firelogik/helios/domain/module/permission"
-	"gitlab.com/firelogik/helios/domain/module/role"
-	"gitlab.com/firelogik/helios/domain/module/user"
+	"github.com/ericmarcelinotju/gram/domain/model"
+	"github.com/ericmarcelinotju/gram/domain/module/permission"
+	"github.com/ericmarcelinotju/gram/domain/module/role"
+	"github.com/ericmarcelinotju/gram/domain/module/user"
 )
 
 // UserCommandFactory create and returns a factory to create command line functions for user

@@ -13,13 +13,13 @@ import (
 	"github.com/google/uuid"
 	pkgErr "github.com/pkg/errors"
 
-	"gitlab.com/firelogik/helios/data/cache"
-	"gitlab.com/firelogik/helios/data/notifier"
-	"gitlab.com/firelogik/helios/data/schema"
-	domainErrors "gitlab.com/firelogik/helios/domain/errors"
-	"gitlab.com/firelogik/helios/domain/model"
-	"gitlab.com/firelogik/helios/library/email"
-	"gitlab.com/firelogik/helios/utils/crypt"
+	"github.com/ericmarcelinotju/gram/data/cache"
+	"github.com/ericmarcelinotju/gram/data/notifier"
+	"github.com/ericmarcelinotju/gram/data/schema"
+	domainErrors "github.com/ericmarcelinotju/gram/domain/errors"
+	"github.com/ericmarcelinotju/gram/domain/model"
+	"github.com/ericmarcelinotju/gram/library/email"
+	"github.com/ericmarcelinotju/gram/utils/crypt"
 )
 
 const (

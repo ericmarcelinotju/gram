@@ -3,7 +3,7 @@ package permission
 import (
 	"context"
 
-	"gitlab.com/firelogik/helios/domain/model"
+	"github.com/ericmarcelinotju/gram/domain/model"
 )
 
 // Service defines permission service behavior.

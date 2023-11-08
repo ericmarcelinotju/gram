@@ -1,7 +1,7 @@
 package dto
 
 import (
-	"gitlab.com/firelogik/helios/constant/enums"
+	"github.com/ericmarcelinotju/gram/constant/enums"
 )
 
 // ListLogResponse struct defines response fields

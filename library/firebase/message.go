@@ -6,8 +6,8 @@ import (
 	"log"
 
 	"firebase.google.com/go/messaging"
-	"gitlab.com/firelogik/helios/config"
-	"gitlab.com/firelogik/helios/domain/model"
+	"github.com/ericmarcelinotju/gram/config"
+	"github.com/ericmarcelinotju/gram/domain/model"
 )
 
 type PushNotifier struct {

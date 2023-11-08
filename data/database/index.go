@@ -3,7 +3,7 @@ package database
 import (
 	"errors"
 
-	"gitlab.com/firelogik/helios/config"
+	"github.com/ericmarcelinotju/gram/config"
 	"gorm.io/gorm"
 )
 

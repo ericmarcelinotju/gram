@@ -8,11 +8,11 @@ import (
 
 	pkgErr "github.com/pkg/errors"
 
-	"gitlab.com/firelogik/helios/data/notifier"
-	"gitlab.com/firelogik/helios/data/schema"
-	"gitlab.com/firelogik/helios/data/storage"
-	domainErrors "gitlab.com/firelogik/helios/domain/errors"
-	"gitlab.com/firelogik/helios/domain/model"
+	"github.com/ericmarcelinotju/gram/data/notifier"
+	"github.com/ericmarcelinotju/gram/data/schema"
+	"github.com/ericmarcelinotju/gram/data/storage"
+	domainErrors "github.com/ericmarcelinotju/gram/domain/errors"
+	"github.com/ericmarcelinotju/gram/domain/model"
 	"gorm.io/gorm"
 )
 

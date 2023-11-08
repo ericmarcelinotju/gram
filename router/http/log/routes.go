@@ -1,8 +1,8 @@
 package log
 
 import (
+	"github.com/ericmarcelinotju/gram/domain/module/log"
 	"github.com/gin-gonic/gin"
-	"gitlab.com/firelogik/helios/domain/module/log"
 )
 
 // NewRoutesFactory create and returns a factory to create routes for the panelment

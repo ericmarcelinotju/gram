@@ -5,8 +5,8 @@ import (
 	"os"
 	"time"
 
-	dto "gitlab.com/firelogik/helios/router/http/dto/responses"
-	timeUtils "gitlab.com/firelogik/helios/utils/time"
+	dto "github.com/ericmarcelinotju/gram/router/http/dto/responses"
+	timeUtils "github.com/ericmarcelinotju/gram/utils/time"
 )
 
 // User struct defines the response model for a user APIs.

@@ -7,9 +7,9 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	"gitlab.com/firelogik/helios/domain/model"
-	"gitlab.com/firelogik/helios/domain/module/auth"
-	response "gitlab.com/firelogik/helios/utils/http"
+	"github.com/ericmarcelinotju/gram/domain/model"
+	"github.com/ericmarcelinotju/gram/domain/module/auth"
+	response "github.com/ericmarcelinotju/gram/utils/http"
 )
 
 type AuthMiddleware struct {

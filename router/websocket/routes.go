@@ -5,9 +5,9 @@ import (
 
 	"github.com/gin-gonic/gin"
 
+	domain "github.com/ericmarcelinotju/gram/domain/websocket"
+	response "github.com/ericmarcelinotju/gram/utils/http"
 	"github.com/gorilla/websocket"
-	domain "gitlab.com/firelogik/helios/domain/websocket"
-	response "gitlab.com/firelogik/helios/utils/http"
 )
 
 // NewRoutesFactory create and returns a factory to create routes for the transactions

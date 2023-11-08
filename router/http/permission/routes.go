@@ -1,8 +1,8 @@
 package permission
 
 import (
+	"github.com/ericmarcelinotju/gram/domain/module/permission"
 	"github.com/gin-gonic/gin"
-	"gitlab.com/firelogik/helios/domain/module/permission"
 )
 
 // NewRoutesFactory create and returns a factory to create routes for the panelment

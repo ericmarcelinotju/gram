@@ -1,4 +1,4 @@
-package backup
+package worker
 
 import (
 	"context"
@@ -6,10 +6,10 @@ import (
 	"time"
 
 	"github.com/adjust/rmq/v4"
-	"gitlab.com/firelogik/helios/constant/enums"
-	"gitlab.com/firelogik/helios/data/job"
-	"gitlab.com/firelogik/helios/domain/model"
-	logDomain "gitlab.com/firelogik/helios/domain/module/log"
+	"github.com/ericmarcelinotju/gram/constant/enums"
+	"github.com/ericmarcelinotju/gram/data/job"
+	"github.com/ericmarcelinotju/gram/domain/model"
+	logDomain "github.com/ericmarcelinotju/gram/domain/module/log"
 )
 
 type Worker struct {

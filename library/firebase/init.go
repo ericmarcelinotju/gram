@@ -4,7 +4,7 @@ import (
 	"context"
 
 	firebase "firebase.google.com/go"
-	"gitlab.com/firelogik/helios/config"
+	"github.com/ericmarcelinotju/gram/config"
 	"google.golang.org/api/option"
 )
 

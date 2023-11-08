@@ -1,6 +1,6 @@
 package notifier
 
-import "gitlab.com/firelogik/helios/domain/model"
+import "github.com/ericmarcelinotju/gram/domain/model"
 
 // Notifier provides an abstraction on top of the notifier logic
 type Notifier interface {

@@ -1,8 +1,8 @@
 package role
 
 import (
+	"github.com/ericmarcelinotju/gram/domain/module/role"
 	"github.com/gin-gonic/gin"
-	"gitlab.com/firelogik/helios/domain/module/role"
 )
 
 // NewRoutesFactory create and returns a factory to create routes for the panelment

@@ -8,9 +8,9 @@ import (
 	"sync"
 	"time"
 
+	"github.com/ericmarcelinotju/gram/utils/env"
+	"github.com/ericmarcelinotju/gram/utils/job"
 	"github.com/gin-gonic/gin"
-	"gitlab.com/firelogik/helios/utils/env"
-	"gitlab.com/firelogik/helios/utils/job"
 )
 
 // Config is a struct that contains configuration variables

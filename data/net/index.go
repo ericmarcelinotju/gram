@@ -7,8 +7,8 @@ import (
 	"net/http"
 	"net/url"
 
-	"gitlab.com/firelogik/helios/config"
-	"gitlab.com/firelogik/helios/library/net"
+	"github.com/ericmarcelinotju/gram/config"
+	"github.com/ericmarcelinotju/gram/library/net"
 )
 
 func Init() (*net.NetClient, error) {

@@ -1,8 +1,8 @@
 package seeder
 
 import (
-	"gitlab.com/firelogik/helios/constant"
-	"gitlab.com/firelogik/helios/data/schema"
+	"github.com/ericmarcelinotju/gram/constant"
+	"github.com/ericmarcelinotju/gram/data/schema"
 	"gorm.io/gorm"
 )
 

@@ -3,10 +3,10 @@ package permission
 import (
 	"net/http"
 
+	"github.com/ericmarcelinotju/gram/domain/module/permission"
+	dto "github.com/ericmarcelinotju/gram/router/http/dto/responses"
+	response "github.com/ericmarcelinotju/gram/utils/http"
 	"github.com/gin-gonic/gin"
-	"gitlab.com/firelogik/helios/domain/module/permission"
-	dto "gitlab.com/firelogik/helios/router/http/dto/responses"
-	response "gitlab.com/firelogik/helios/utils/http"
 )
 
 // GetPermission godoc

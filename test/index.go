@@ -1,26 +1,26 @@
 package test
 
 import (
+	"github.com/ericmarcelinotju/gram/config"
+	"github.com/ericmarcelinotju/gram/data/cache"
+	"github.com/ericmarcelinotju/gram/data/database"
+	"github.com/ericmarcelinotju/gram/data/notifier"
+	"github.com/ericmarcelinotju/gram/data/storage"
 	"github.com/gin-gonic/gin"
-	"gitlab.com/firelogik/helios/config"
-	"gitlab.com/firelogik/helios/data/cache"
-	"gitlab.com/firelogik/helios/data/database"
-	"gitlab.com/firelogik/helios/data/notifier"
-	"gitlab.com/firelogik/helios/data/storage"
 
-	authStore "gitlab.com/firelogik/helios/data/module/auth"
-	logStore "gitlab.com/firelogik/helios/data/module/log"
-	permissionStore "gitlab.com/firelogik/helios/data/module/permission"
-	roleStore "gitlab.com/firelogik/helios/data/module/role"
-	settingStore "gitlab.com/firelogik/helios/data/module/setting"
-	userStore "gitlab.com/firelogik/helios/data/module/user"
+	authStore "github.com/ericmarcelinotju/gram/data/module/auth"
+	logStore "github.com/ericmarcelinotju/gram/data/module/log"
+	permissionStore "github.com/ericmarcelinotju/gram/data/module/permission"
+	roleStore "github.com/ericmarcelinotju/gram/data/module/role"
+	settingStore "github.com/ericmarcelinotju/gram/data/module/setting"
+	userStore "github.com/ericmarcelinotju/gram/data/module/user"
 
-	"gitlab.com/firelogik/helios/domain/module/auth"
-	"gitlab.com/firelogik/helios/domain/module/log"
-	"gitlab.com/firelogik/helios/domain/module/permission"
-	"gitlab.com/firelogik/helios/domain/module/role"
-	"gitlab.com/firelogik/helios/domain/module/setting"
-	"gitlab.com/firelogik/helios/domain/module/user"
+	"github.com/ericmarcelinotju/gram/domain/module/auth"
+	"github.com/ericmarcelinotju/gram/domain/module/log"
+	"github.com/ericmarcelinotju/gram/domain/module/permission"
+	"github.com/ericmarcelinotju/gram/domain/module/role"
+	"github.com/ericmarcelinotju/gram/domain/module/setting"
+	"github.com/ericmarcelinotju/gram/domain/module/user"
 )
 
 var AUTHREPO auth.Repository

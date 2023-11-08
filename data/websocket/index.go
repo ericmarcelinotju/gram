@@ -1,7 +1,7 @@
 package websocket
 
 import (
-	ws "gitlab.com/firelogik/helios/library/websocket"
+	ws "github.com/ericmarcelinotju/gram/library/websocket"
 )
 
 func Init() (*ws.Dispatcher, error) {

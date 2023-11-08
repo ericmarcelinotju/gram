@@ -1,9 +1,9 @@
 package schema
 
 import (
+	"github.com/ericmarcelinotju/gram/constant/enums"
+	"github.com/ericmarcelinotju/gram/domain/model"
 	"github.com/google/uuid"
-	"gitlab.com/firelogik/helios/constant/enums"
-	"gitlab.com/firelogik/helios/domain/model"
 )
 
 // Log struct defines the database model for an log.

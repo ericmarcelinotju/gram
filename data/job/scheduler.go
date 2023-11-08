@@ -6,8 +6,8 @@ import (
 	"reflect"
 	"time"
 
+	"github.com/ericmarcelinotju/gram/constant/enums"
 	"github.com/go-co-op/gocron"
-	"gitlab.com/firelogik/helios/constant/enums"
 )
 
 type Scheduler struct {

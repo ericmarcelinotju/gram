@@ -3,10 +3,10 @@ package user
 import (
 	"net/http"
 
+	"github.com/ericmarcelinotju/gram/domain/module/user"
+	dto "github.com/ericmarcelinotju/gram/router/http/dto/responses"
+	response "github.com/ericmarcelinotju/gram/utils/http"
 	"github.com/gin-gonic/gin"
-	"gitlab.com/firelogik/helios/domain/module/user"
-	dto "gitlab.com/firelogik/helios/router/http/dto/responses"
-	response "gitlab.com/firelogik/helios/utils/http"
 )
 
 // GetUser godoc

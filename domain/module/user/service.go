@@ -5,11 +5,11 @@ import (
 	"errors"
 	"fmt"
 
+	domainErrors "github.com/ericmarcelinotju/gram/domain/errors"
+	"github.com/ericmarcelinotju/gram/domain/model"
+	"github.com/ericmarcelinotju/gram/domain/module/role"
+	"github.com/ericmarcelinotju/gram/utils/crypt"
 	"github.com/google/uuid"
-	domainErrors "gitlab.com/firelogik/helios/domain/errors"
-	"gitlab.com/firelogik/helios/domain/model"
-	"gitlab.com/firelogik/helios/domain/module/role"
-	"gitlab.com/firelogik/helios/utils/crypt"
 )
 
 // Service defines user service behavior.

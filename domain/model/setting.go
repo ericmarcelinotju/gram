@@ -1,6 +1,6 @@
 package model
 
-import dto "gitlab.com/firelogik/helios/router/http/dto/responses"
+import dto "github.com/ericmarcelinotju/gram/router/http/dto/responses"
 
 // Setting struct defines the database model for a setting.
 type Setting struct {

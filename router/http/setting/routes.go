@@ -1,8 +1,8 @@
 package setting
 
 import (
+	"github.com/ericmarcelinotju/gram/domain/module/setting"
 	"github.com/gin-gonic/gin"
-	"gitlab.com/firelogik/helios/domain/module/setting"
 )
 
 // NewRoutesFactory create and returns a factory to create routes for the panelment

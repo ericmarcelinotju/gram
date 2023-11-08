@@ -4,7 +4,7 @@ GRAM is Golang boilerplate designed to create neat REST API with robust way to d
 
 ![Project structure](./diagram.png?raw=true "Project Structure")
 
-# Tech Stack
+# Features
 
 - Migration
 - Seeding
@@ -41,7 +41,7 @@ go run main.go -s
 
 # Swagger
 
-All routes registered at Routes/Controller directory must be documented using gin-swagger comment
+All routes registered at Routes/Controller directory can be documented using gin-swagger comment
 
 > Update `swagger.json` and `swagger.yaml`
 ```

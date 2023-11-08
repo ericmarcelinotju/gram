@@ -3,7 +3,7 @@ package setting
 import (
 	"context"
 
-	"gitlab.com/firelogik/helios/domain/model"
+	"github.com/ericmarcelinotju/gram/domain/model"
 )
 
 // Repository provides an abstraction on top of the setting data source

@@ -6,10 +6,10 @@ import (
 	"strconv"
 	"strings"
 
-	"gitlab.com/firelogik/helios/constant"
-	"gitlab.com/firelogik/helios/data/job"
-	"gitlab.com/firelogik/helios/domain/model"
-	"gitlab.com/firelogik/helios/library/email"
+	"github.com/ericmarcelinotju/gram/constant"
+	"github.com/ericmarcelinotju/gram/data/job"
+	"github.com/ericmarcelinotju/gram/domain/model"
+	"github.com/ericmarcelinotju/gram/library/email"
 )
 
 // Service defines Setting service behavior.

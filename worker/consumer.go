@@ -1,4 +1,4 @@
-package backup
+package worker
 
 import (
 	"context"
@@ -6,12 +6,12 @@ import (
 	"fmt"
 	"time"
 
-	"gitlab.com/firelogik/helios/constant/enums"
-	"gitlab.com/firelogik/helios/domain/model"
+	"github.com/ericmarcelinotju/gram/constant/enums"
+	"github.com/ericmarcelinotju/gram/domain/model"
 
 	"github.com/adjust/rmq/v4"
-	"gitlab.com/firelogik/helios/data/job"
-	logDomain "gitlab.com/firelogik/helios/domain/module/log"
+	"github.com/ericmarcelinotju/gram/data/job"
+	logDomain "github.com/ericmarcelinotju/gram/domain/module/log"
 )
 
 type Consumer struct {
@@ -43,7 +43,7 @@ func NewConsumerFactory(
 		return &Consumer{
 			reportBatchSize: reportBatchSize,
 
-			name:   fmt.Sprintf("backup-consumer-%d", tag),
+			name:   fmt.Sprintf("consumer-%d", tag),
 			count:  0,
 			before: time.Now(),
 
@@ -97,9 +97,9 @@ func (c *Consumer) Consume(delivery rmq.Delivery) {
 func CreateConsumeLog(logSvc logDomain.Service, ctx context.Context, subject, content string, level enums.LogLevel) {
 	var title string
 	if level == enums.LogLevelInfo {
-		title = "Backup Scheduler Consumer Info"
+		title = "Scheduler Consumer Info"
 	} else if level == enums.LogLevelDanger {
-		title = "Backup Scheduler Consumer Problem"
+		title = "Scheduler Consumer Problem"
 	}
 	logSvc.CreateLog(ctx, &model.Log{
 		Title:   title,

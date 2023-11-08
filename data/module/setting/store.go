@@ -6,11 +6,11 @@ import (
 
 	pkgErr "github.com/pkg/errors"
 
-	"gitlab.com/firelogik/helios/config"
-	"gitlab.com/firelogik/helios/data/cache"
-	"gitlab.com/firelogik/helios/data/schema"
-	domainErrors "gitlab.com/firelogik/helios/domain/errors"
-	"gitlab.com/firelogik/helios/domain/model"
+	"github.com/ericmarcelinotju/gram/config"
+	"github.com/ericmarcelinotju/gram/data/cache"
+	"github.com/ericmarcelinotju/gram/data/schema"
+	domainErrors "github.com/ericmarcelinotju/gram/domain/errors"
+	"github.com/ericmarcelinotju/gram/domain/model"
 
 	"gorm.io/gorm"
 )

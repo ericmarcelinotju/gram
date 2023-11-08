@@ -1,4 +1,4 @@
-module gitlab.com/firelogik/helios
+module github.com/ericmarcelinotju/gram
 
 go 1.20
 

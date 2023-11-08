@@ -5,8 +5,8 @@ import (
 	"encoding/hex"
 	"fmt"
 
+	"github.com/ericmarcelinotju/gram/config"
 	"github.com/glebarez/sqlite"
-	"gitlab.com/firelogik/helios/config"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
 )

@@ -7,11 +7,11 @@ import (
 	"net/http/httptest"
 	"testing"
 
+	"github.com/ericmarcelinotju/gram/router/http/auth"
+	dto "github.com/ericmarcelinotju/gram/router/http/dto/responses"
 	"github.com/go-playground/assert/v2"
-	"gitlab.com/firelogik/helios/router/http/auth"
-	dto "gitlab.com/firelogik/helios/router/http/dto/responses"
 
-	response "gitlab.com/firelogik/helios/utils/http"
+	response "github.com/ericmarcelinotju/gram/utils/http"
 )
 
 var AUTH_TOKEN = ""

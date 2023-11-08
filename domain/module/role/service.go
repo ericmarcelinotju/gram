@@ -3,8 +3,8 @@ package role
 import (
 	"context"
 
-	"gitlab.com/firelogik/helios/domain/model"
-	"gitlab.com/firelogik/helios/domain/module/permission"
+	"github.com/ericmarcelinotju/gram/domain/model"
+	"github.com/ericmarcelinotju/gram/domain/module/permission"
 )
 
 // Service defines role service behavior.

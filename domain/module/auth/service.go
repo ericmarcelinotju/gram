@@ -6,13 +6,13 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/ericmarcelinotju/gram/constant/enums"
+	domainErrors "github.com/ericmarcelinotju/gram/domain/errors"
+	"github.com/ericmarcelinotju/gram/domain/model"
+	"github.com/ericmarcelinotju/gram/domain/module/log"
+	"github.com/ericmarcelinotju/gram/domain/module/user"
+	"github.com/ericmarcelinotju/gram/utils/crypt"
 	"github.com/gin-gonic/gin"
-	"gitlab.com/firelogik/helios/constant/enums"
-	domainErrors "gitlab.com/firelogik/helios/domain/errors"
-	"gitlab.com/firelogik/helios/domain/model"
-	"gitlab.com/firelogik/helios/domain/module/log"
-	"gitlab.com/firelogik/helios/domain/module/user"
-	"gitlab.com/firelogik/helios/utils/crypt"
 )
 
 type Service interface {

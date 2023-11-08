@@ -7,11 +7,11 @@ import (
 	"os"
 	"time"
 
-	"gitlab.com/firelogik/helios/data/database/seeder"
-	permissionStore "gitlab.com/firelogik/helios/data/module/permission"
-	roleStore "gitlab.com/firelogik/helios/data/module/role"
-	userStore "gitlab.com/firelogik/helios/data/module/user"
-	"gitlab.com/firelogik/helios/domain"
+	"github.com/ericmarcelinotju/gram/data/database/seeder"
+	permissionStore "github.com/ericmarcelinotju/gram/data/module/permission"
+	roleStore "github.com/ericmarcelinotju/gram/data/module/role"
+	userStore "github.com/ericmarcelinotju/gram/data/module/user"
+	"github.com/ericmarcelinotju/gram/domain"
 	"gorm.io/gorm"
 )
 

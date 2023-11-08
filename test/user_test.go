@@ -8,13 +8,13 @@ import (
 	"net/http/httptest"
 	"testing"
 
+	"github.com/ericmarcelinotju/gram/domain/model"
+	"github.com/ericmarcelinotju/gram/router/http/dto"
+	responses "github.com/ericmarcelinotju/gram/router/http/dto/responses"
+	"github.com/ericmarcelinotju/gram/router/http/user"
 	"github.com/go-playground/assert/v2"
-	"gitlab.com/firelogik/helios/domain/model"
-	"gitlab.com/firelogik/helios/router/http/dto"
-	responses "gitlab.com/firelogik/helios/router/http/dto/responses"
-	"gitlab.com/firelogik/helios/router/http/user"
 
-	response "gitlab.com/firelogik/helios/utils/http"
+	response "github.com/ericmarcelinotju/gram/utils/http"
 )
 
 func TestListUserHandler(t *testing.T) {

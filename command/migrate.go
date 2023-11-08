@@ -6,7 +6,7 @@ import (
 	"reflect"
 	"strings"
 
-	"gitlab.com/firelogik/helios/domain"
+	"github.com/ericmarcelinotju/gram/domain"
 )
 
 // MigrateCommandFactory create and returns a factory to create command line functions for migration
