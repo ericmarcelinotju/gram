@@ -7,8 +7,8 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	"github.com/ericmarcelinotju/gram/domain/model"
-	"github.com/ericmarcelinotju/gram/domain/module/auth"
+	"github.com/ericmarcelinotju/gram/dto"
+	authModule "github.com/ericmarcelinotju/gram/module/auth"
 	response "github.com/ericmarcelinotju/gram/utils/http"
 )
 
@@ -18,8 +18,8 @@ type AuthMiddleware struct {
 }
 
 // NewRoutesFactory create and returns a factory to create routes for the acknowledgement
-func NewAuthMiddleware(authSvc auth.Service) AuthMiddleware {
-	getPermission := func(permissions []model.Permission, url, method string) *model.Permission {
+func NewAuthMiddleware(authSvc authModule.Service) AuthMiddleware {
+	getPermission := func(permissions []dto.PermissionDto, url, method string) *dto.PermissionDto {
 		for _, perm := range permissions {
 			if strings.Contains(url, strings.ToLower(perm.Module)) && perm.Method == method {
 				return &perm
@@ -28,7 +28,7 @@ func NewAuthMiddleware(authSvc auth.Service) AuthMiddleware {
 		return nil
 	}
 
-	getSpecialPermission := func(permissions []model.Permission, module, method string) *model.Permission {
+	getSpecialPermission := func(permissions []dto.PermissionDto, module, method string) *dto.PermissionDto {
 		for _, perm := range permissions {
 			if strings.ToLower(module) == strings.ToLower(perm.Module) && perm.Method == method {
 				return &perm
@@ -64,13 +64,13 @@ func NewAuthMiddleware(authSvc auth.Service) AuthMiddleware {
 				response.ResponseAbort(c, errors.New("no user found in context"), http.StatusUnauthorized)
 				return
 			}
-			user, ok := userCtx.(*model.User)
+			user, ok := userCtx.(*dto.UserDto)
 			if !ok || user == nil {
 				response.ResponseAbort(c, errors.New("user context format invalid"), http.StatusUnauthorized)
 				return
 			}
 
-			var permissions []model.Permission = user.Role.Permissions
+			var permissions []dto.PermissionDto = user.Role.Permissions
 			var urlString string = c.Request.URL.String()
 			var requestMethod string = c.Request.Method
 

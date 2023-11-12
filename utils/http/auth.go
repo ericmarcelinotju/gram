@@ -4,16 +4,16 @@ import (
 	"errors"
 	"time"
 
-	"github.com/ericmarcelinotju/gram/domain/model"
+	"github.com/ericmarcelinotju/gram/dto"
 	"github.com/gin-gonic/gin"
 )
 
-func GetUser(c *gin.Context) (*model.User, error) {
+func GetUser(c *gin.Context) (*dto.UserDto, error) {
 	userCtx, ok := c.Get("auth-user")
 	if !ok {
 		return nil, errors.New("no user found in context")
 	}
-	user, ok := userCtx.(*model.User)
+	user, ok := userCtx.(*dto.UserDto)
 	if !ok || user == nil {
 		return nil, errors.New("user context format invalid")
 	}

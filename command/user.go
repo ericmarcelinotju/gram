@@ -4,14 +4,14 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/ericmarcelinotju/gram/domain/model"
-	"github.com/ericmarcelinotju/gram/domain/module/permission"
-	"github.com/ericmarcelinotju/gram/domain/module/role"
-	"github.com/ericmarcelinotju/gram/domain/module/user"
+	"github.com/ericmarcelinotju/gram/dto"
+	permissionModule "github.com/ericmarcelinotju/gram/module/permission"
+	roleModule "github.com/ericmarcelinotju/gram/module/role"
+	userModule "github.com/ericmarcelinotju/gram/module/user"
 )
 
 // UserCommandFactory create and returns a factory to create command line functions for user
-func UserCommandFactory(permRepo permission.Repository, roleRepo role.Repository, userRepo user.Repository) func(context.Context, string) error {
+func UserCommandFactory(permRepo permissionModule.Repository, roleRepo roleModule.Repository, userRepo userModule.Repository) func(context.Context, string) error {
 	createSuperAdmin := func(ctx context.Context, username string) error {
 		fmt.Printf("Creating user with username '%s'", username)
 
@@ -23,51 +23,49 @@ func UserCommandFactory(permRepo permission.Repository, roleRepo role.Repository
 		fmt.Print("Password :   ")
 		fmt.Scanln(&password)
 
-		var role model.Role
-		roles, _, err := roleRepo.SelectRole(ctx, &model.Role{
-			Name: "superadmin",
-		})
+		var role dto.RoleDto
+		roles, _, err := roleRepo.Select(ctx, &dto.RoleDto{Name: "superadmin"}, nil, nil)
 		if err != nil {
 			return fmt.Errorf("error when reading roles %s", err)
 		}
 
-		permissions, _, err := permRepo.SelectPermission(ctx, nil)
+		permissions, _, err := permRepo.Select(ctx, nil, nil, nil)
 		if err != nil {
 			return fmt.Errorf("error when reading permissions %s", err)
 		}
 
 		if err != nil || len(roles) <= 0 {
 
-			role = model.Role{
+			role = dto.RoleDto{
 				Name:        "superadmin",
 				Description: "Super Admin",
 				Permissions: permissions,
 			}
-			err = roleRepo.InsertRole(ctx, &role)
+			err = roleRepo.Insert(ctx, &role)
 			if err != nil {
 				return fmt.Errorf("error when creating role %s", err)
 			}
 		} else {
-			role.ID = roles[0].ID
+			role.Id = roles[0].Id
 
-			role = model.Role{
-				ID:          roles[0].ID,
+			role = dto.RoleDto{
+				Id:          role.Id,
 				Permissions: permissions,
 			}
 
-			err = roleRepo.UpdateRole(ctx, &role)
+			err = roleRepo.Update(ctx, &role)
 			if err != nil {
 				return fmt.Errorf("error when updating role permissions %s", err)
 			}
 		}
 
-		superAdminRoleID := role.ID
+		superAdminRoleID := role.Id
 
-		err = userRepo.InsertUser(ctx, &model.User{
+		err = userRepo.Insert(ctx, &dto.UserDto{
 			Username: username,
 			Email:    email,
 			Password: password,
-			RoleID:   superAdminRoleID,
+			RoleId:   superAdminRoleID,
 		})
 		if err != nil {
 			return fmt.Errorf("error when creating user %s", err)

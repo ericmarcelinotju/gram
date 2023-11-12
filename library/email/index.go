@@ -7,7 +7,7 @@ import (
 	"html/template"
 	"os"
 
-	"github.com/ericmarcelinotju/gram/domain/model"
+	"github.com/ericmarcelinotju/gram/dto"
 	"gopkg.in/gomail.v2"
 )
 
@@ -30,7 +30,7 @@ type EmailContent struct {
 	Data       interface{}
 }
 
-func (e Emailer) Notify(title string, content interface{}, recipient *model.User) error {
+func (e Emailer) Notify(title string, content interface{}, recipient *dto.UserDto) error {
 	// Sender data.
 	from := e.SenderEmail
 	password := e.SenderPassword

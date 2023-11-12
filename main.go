@@ -10,31 +10,24 @@ import (
 	"github.com/ericmarcelinotju/gram/config"
 	"github.com/ericmarcelinotju/gram/library/email"
 
-	"github.com/ericmarcelinotju/gram/data/cache"
-	"github.com/ericmarcelinotju/gram/data/database"
-	"github.com/ericmarcelinotju/gram/data/job"
-	"github.com/ericmarcelinotju/gram/data/notifier"
-	"github.com/ericmarcelinotju/gram/data/storage"
+	"github.com/ericmarcelinotju/gram/repository/cache"
+	"github.com/ericmarcelinotju/gram/repository/database"
+	"github.com/ericmarcelinotju/gram/repository/job"
+	"github.com/ericmarcelinotju/gram/repository/notifier"
+	"github.com/ericmarcelinotju/gram/repository/storage"
 
-	mediaStore "github.com/ericmarcelinotju/gram/data/media"
-	authStore "github.com/ericmarcelinotju/gram/data/module/auth"
+	mediaStore "github.com/ericmarcelinotju/gram/repository/media"
 
-	logStore "github.com/ericmarcelinotju/gram/data/module/log"
-	permissionStore "github.com/ericmarcelinotju/gram/data/module/permission"
-	roleStore "github.com/ericmarcelinotju/gram/data/module/role"
-	settingStore "github.com/ericmarcelinotju/gram/data/module/setting"
-	userStore "github.com/ericmarcelinotju/gram/data/module/user"
-	websocketStore "github.com/ericmarcelinotju/gram/data/websocket"
+	websocketStore "github.com/ericmarcelinotju/gram/repository/websocket"
+	authModule "github.com/ericmarcelinotju/gram/module/auth"
+	permissionModule "github.com/ericmarcelinotju/gram/module/permission"
+	roleModule "github.com/ericmarcelinotju/gram/module/role"
+	settingModule "github.com/ericmarcelinotju/gram/module/setting"
+	userModule "github.com/ericmarcelinotju/gram/module/user"
 
 	router "github.com/ericmarcelinotju/gram/router"
 
 	"github.com/ericmarcelinotju/gram/domain/media"
-	"github.com/ericmarcelinotju/gram/domain/module/auth"
-	logService "github.com/ericmarcelinotju/gram/domain/module/log"
-	"github.com/ericmarcelinotju/gram/domain/module/permission"
-	"github.com/ericmarcelinotju/gram/domain/module/role"
-	"github.com/ericmarcelinotju/gram/domain/module/setting"
-	"github.com/ericmarcelinotju/gram/domain/module/user"
 
 	wsDomain "github.com/ericmarcelinotju/gram/domain/websocket"
 )
@@ -94,7 +87,7 @@ func main() {
 
 	var forgotEmail *email.Emailer
 
-	settingRepo := settingStore.New(db, redisCache)
+	settingRepo := settingModule.NewRepository(db, redisCache)
 
 	// Setup smtp from setting
 	smtpConf, err := notifier.GetSMTPConfig(settingRepo)
@@ -111,24 +104,21 @@ func main() {
 		}
 	}
 
-	authRepo := authStore.New(db, redisCache, forgotEmail)
+	authRepo := authModule.NewRepository(db, redisCache, forgotEmail)
 	mediaRepo := mediaStore.New(mediaStorage)
 
-	userRepo := userStore.New(db, mediaStorage)
-	roleRepo := roleStore.New(db)
-	permissionRepo := permissionStore.New(db)
+	userRepo := userModule.NewRepository(db, mediaStorage)
+	roleRepo := roleModule.NewRepository(db)
+	permissionRepo := permissionModule.NewRepository(db)
 
-	logRepo := logStore.New(db)
-
-	authSvc := auth.NewService(authRepo, userRepo, logRepo)
+	authSvc := authModule.NewService(authRepo, userRepo)
 	mediaSvc := media.NewService(mediaRepo)
 
-	userSvc := user.NewService(userRepo, roleRepo)
-	roleSvc := role.NewService(roleRepo, permissionRepo)
-	permissionSvc := permission.NewService(permissionRepo)
+	userSvc := userModule.NewService(userRepo)
+	roleSvc := roleModule.NewService(roleRepo)
+	permissionSvc := permissionModule.NewService(permissionRepo)
 
-	logSvc := logService.NewService(logRepo)
-	settingSvc := setting.NewService(settingRepo, firstBackupScheduler, secondBackupScheduler, forgotEmail)
+	settingSvc := settingModule.NewService(settingRepo, firstBackupScheduler, secondBackupScheduler, forgotEmail)
 
 	//websocket
 	wsRepo, err := websocketStore.New(dispatcher)
@@ -147,7 +137,6 @@ func main() {
 		roleSvc,
 		permissionSvc,
 
-		logSvc,
 		settingSvc,
 
 		websocketSvc,

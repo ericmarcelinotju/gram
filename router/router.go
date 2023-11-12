@@ -10,27 +10,16 @@ import (
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 
-	"github.com/ericmarcelinotju/gram/data/job"
-	"github.com/ericmarcelinotju/gram/domain/media"
-	"github.com/ericmarcelinotju/gram/domain/module/auth"
-	logService "github.com/ericmarcelinotju/gram/domain/module/log"
-	"github.com/ericmarcelinotju/gram/domain/module/permission"
-	"github.com/ericmarcelinotju/gram/domain/module/role"
-	"github.com/ericmarcelinotju/gram/domain/module/setting"
-	"github.com/ericmarcelinotju/gram/domain/module/user"
 	"github.com/ericmarcelinotju/gram/domain/websocket"
-	healthRoutes "github.com/ericmarcelinotju/gram/router/http/health"
+	authModule "github.com/ericmarcelinotju/gram/module/auth"
+	healthModule "github.com/ericmarcelinotju/gram/module/health"
+	permissionModule "github.com/ericmarcelinotju/gram/module/permission"
+	roleModule "github.com/ericmarcelinotju/gram/module/role"
+	settingModule "github.com/ericmarcelinotju/gram/module/setting"
+	userModule "github.com/ericmarcelinotju/gram/module/user"
+	"github.com/ericmarcelinotju/gram/repository/job"
 
-	authRoutes "github.com/ericmarcelinotju/gram/router/http/auth"
-	mediaRoutes "github.com/ericmarcelinotju/gram/router/http/media"
-	permissionRoutes "github.com/ericmarcelinotju/gram/router/http/permission"
-	roleRoutes "github.com/ericmarcelinotju/gram/router/http/role"
-	userRoutes "github.com/ericmarcelinotju/gram/router/http/user"
-
-	logRoutes "github.com/ericmarcelinotju/gram/router/http/log"
-	settingRoutes "github.com/ericmarcelinotju/gram/router/http/setting"
-
-	swaggerRoutes "github.com/ericmarcelinotju/gram/router/http/swagger"
+	swaggerRoutes "github.com/ericmarcelinotju/gram/router/swagger"
 	websocketRoutes "github.com/ericmarcelinotju/gram/router/websocket"
 
 	"github.com/ericmarcelinotju/gram/router/middleware"
@@ -40,15 +29,13 @@ import (
 
 // NewHTTPHandler returns the HTTP requests handler
 func NewHTTPHandler(
-	authSvc auth.Service,
-	mediaSvc media.Service,
+	authSvc authModule.Service,
 
-	userSvc user.Service,
-	roleSvc role.Service,
-	permissionSvc permission.Service,
+	userSvc userModule.Service,
+	roleSvc roleModule.Service,
+	permissionSvc permissionModule.Service,
 
-	logSvc logService.Service,
-	settingSvc setting.Service,
+	settingSvc settingModule.Service,
 
 	websocketSvc websocket.WebsocketService,
 
@@ -86,39 +73,21 @@ func NewHTTPHandler(
 
 	router.Static("/media", "./media")
 
-	apiGroup := router.Group("/api")
+	healthGroup := router.Group("/health")
+	healthModule.NewRoutesFactory(healthGroup)()
 
-	healthGroup := apiGroup.Group("/health")
-	healthRoutes.NewRoutesFactory(healthGroup)()
-
-	authGroup := apiGroup.Group("/auth")
-	authRoutes.NewRoutesFactory(authGroup)(authSvc, userSvc)
+	authModule.NewRoutesFactory(router)(authSvc, userSvc)
 
 	authMiddleware := middleware.NewAuthMiddleware(authSvc)
-
-	apiGroup.Use(authMiddleware.Authenticate)
+	authGroup := router.Group("")
+	authGroup.Use(authMiddleware.Authenticate)
+	authGroup.Use(authMiddleware.Authorize)
 	{
-		apiGroup.Use(authMiddleware.Authorize)
-		{
-			userGroup := apiGroup.Group("/user")
-			userRoutes.NewRoutesFactory(userGroup)(userSvc)
-
-			roleGroup := apiGroup.Group("/role")
-			roleRoutes.NewRoutesFactory(roleGroup)(roleSvc)
-
-			permissionGroup := apiGroup.Group("/permission")
-			permissionRoutes.NewRoutesFactory(permissionGroup)(permissionSvc)
-
-			logGroup := apiGroup.Group("/log")
-			logRoutes.NewRoutesFactory(logGroup)(logSvc)
-
-			settingGroup := apiGroup.Group("/setting")
-			settingRoutes.NewRoutesFactory(settingGroup)(settingSvc)
-		}
+		userModule.NewApiRoutesFactory(authGroup)(userSvc)
+		roleModule.NewRoutesFactory(authGroup)(roleSvc)
+		permissionModule.NewRoutesFactory(authGroup)(permissionSvc)
+		settingModule.NewRoutesFactory(authGroup)(settingSvc)
 	}
-
-	mediaGroup := router.Group("/media")
-	mediaRoutes.NewRoutesFactory(mediaGroup)(mediaSvc)
 
 	wsGroup := router.Group("/ws")
 	websocketRoutes.NewRoutesFactory(wsGroup)(websocketSvc)

@@ -7,11 +7,11 @@ import (
 	"os"
 	"time"
 
-	"github.com/ericmarcelinotju/gram/data/database/seeder"
-	permissionStore "github.com/ericmarcelinotju/gram/data/module/permission"
-	roleStore "github.com/ericmarcelinotju/gram/data/module/role"
-	userStore "github.com/ericmarcelinotju/gram/data/module/user"
 	"github.com/ericmarcelinotju/gram/domain"
+	permissionModule "github.com/ericmarcelinotju/gram/module/permission"
+	roleModule "github.com/ericmarcelinotju/gram/module/role"
+	userModule "github.com/ericmarcelinotju/gram/module/user"
+	"github.com/ericmarcelinotju/gram/repository/database/seeder"
 	"gorm.io/gorm"
 )
 
@@ -26,9 +26,9 @@ func ProcessCommands(db *gorm.DB) {
 	flag.Parse()
 
 	if cmdUser != nil && len(*cmdUser) > 0 {
-		userRepo := userStore.New(db, nil)
-		roleRepo := roleStore.New(db)
-		permRepo := permissionStore.New(db)
+		userRepo := userModule.NewRepository(db, nil)
+		roleRepo := roleModule.NewRepository(db)
+		permRepo := permissionModule.NewRepository(db)
 
 		createSuperAdmin := UserCommandFactory(permRepo, roleRepo, userRepo)
 		err := createSuperAdmin(ctx, *cmdUser)
@@ -48,7 +48,6 @@ func ProcessCommands(db *gorm.DB) {
 				seeder.NewPermissionSeederService(db),
 				seeder.NewRoleSeederService(db),
 				seeder.NewUserSeederService(db),
-				seeder.NewLogSeederService(db),
 			},
 		)
 		err := migrate(ctx)

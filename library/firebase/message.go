@@ -7,7 +7,7 @@ import (
 
 	"firebase.google.com/go/messaging"
 	"github.com/ericmarcelinotju/gram/config"
-	"github.com/ericmarcelinotju/gram/domain/model"
+	"github.com/ericmarcelinotju/gram/dto"
 )
 
 type PushNotifier struct {
@@ -33,7 +33,7 @@ func NewPushNotifier(conf *config.Storage) (*PushNotifier, error) {
 	}, nil
 }
 
-func (n *PushNotifier) Notify(topic string, data interface{}, recipient *model.User) error {
+func (n *PushNotifier) Notify(topic string, data interface{}, recipient *dto.UserDto) error {
 	messageMap, ok := data.(map[string]string)
 	if !ok {
 		return errors.New("data format invalid")
@@ -53,9 +53,9 @@ func (n *PushNotifier) Notify(topic string, data interface{}, recipient *model.U
 	}
 
 	// Send message to spesific user
-	if recipient != nil && recipient.NotificationToken != nil {
-		message.Token = *recipient.NotificationToken
-	}
+	// if recipient != nil && recipient.NotificationToken != nil {
+	// 	message.Token = *recipient.NotificationToken
+	// }
 
 	// Send a message to the devices subscribed to the provided topic.
 	response, err := n.client.Send(n.ctx, message)

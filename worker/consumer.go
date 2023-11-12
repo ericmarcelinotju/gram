@@ -7,11 +7,9 @@ import (
 	"time"
 
 	"github.com/ericmarcelinotju/gram/constant/enums"
-	"github.com/ericmarcelinotju/gram/domain/model"
 
 	"github.com/adjust/rmq/v4"
 	"github.com/ericmarcelinotju/gram/data/job"
-	logDomain "github.com/ericmarcelinotju/gram/domain/module/log"
 )
 
 type Consumer struct {
@@ -22,11 +20,9 @@ type Consumer struct {
 	before time.Time
 
 	ctx context.Context
-
-	logSvc logDomain.Service
 }
 
-func NewJobProcessor(logSvc logDomain.Service) func(ctx context.Context, job job.Job) error {
+func NewJobProcessor() func(ctx context.Context, job job.Job) error {
 	return func(ctx context.Context, currJob job.Job) error {
 		// Process job
 
@@ -37,7 +33,6 @@ func NewJobProcessor(logSvc logDomain.Service) func(ctx context.Context, job job
 // NewConsumerFactory create and returns a factory to create billing consumer for scheduler
 func NewConsumerFactory(
 	ctx context.Context,
-	logSvc logDomain.Service,
 ) func(tag int, reportBatchSize int) rmq.Consumer {
 	consumerFactory := func(tag int, reportBatchSize int) rmq.Consumer {
 		return &Consumer{
@@ -47,8 +42,7 @@ func NewConsumerFactory(
 			count:  0,
 			before: time.Now(),
 
-			ctx:    ctx,
-			logSvc: logSvc,
+			ctx: ctx,
 		}
 	}
 	return consumerFactory
@@ -62,50 +56,38 @@ func (c *Consumer) Consume(delivery rmq.Delivery) {
 		duration := time.Since(c.before)
 		c.before = time.Now()
 		perSecond := time.Second / (duration / time.Duration(c.reportBatchSize))
-		CreateConsumeLog(c.logSvc, c.ctx, "Report", fmt.Sprintf("%s consumed %d %s %d", c.name, c.count, payload, perSecond), enums.LogLevelInfo)
+		CreateConsumeLog(c.ctx, "Report", fmt.Sprintf("%s consumed %d %s %d", c.name, c.count, payload, perSecond), enums.LogLevelInfo)
 	}
 
 	var job job.Job
 	if err := json.Unmarshal([]byte(payload), &job); err != nil {
 		// handle json error
-		CreateConsumeLog(c.logSvc, c.ctx, "Format job error", err.Error(), enums.LogLevelDanger)
+		CreateConsumeLog(c.ctx, "Format job error", err.Error(), enums.LogLevelDanger)
 		if err := delivery.Reject(); err != nil {
 			// handle reject error
-			CreateConsumeLog(c.logSvc, c.ctx, "Reject job error", err.Error(), enums.LogLevelWarning)
+			CreateConsumeLog(c.ctx, "Reject job error", err.Error(), enums.LogLevelWarning)
 		}
 		return
 	}
 
-	err := NewJobProcessor(c.logSvc)(c.ctx, job)
+	err := NewJobProcessor()(c.ctx, job)
 	if err != nil {
 		// handle error
-		CreateConsumeLog(c.logSvc, c.ctx, "Process job error", err.Error(), enums.LogLevelDanger)
+		CreateConsumeLog(c.ctx, "Process job error", err.Error(), enums.LogLevelDanger)
 		if err := delivery.Reject(); err != nil {
 			// handle reject error
-			CreateConsumeLog(c.logSvc, c.ctx, "Reject job error", err.Error(), enums.LogLevelWarning)
+			CreateConsumeLog(c.ctx, "Reject job error", err.Error(), enums.LogLevelWarning)
 		}
 		return
 	}
 
-	CreateConsumeLog(c.logSvc, c.ctx, "Performing task", fmt.Sprintf("Process recording: %v", job.Value), enums.LogLevelInfo)
+	CreateConsumeLog(c.ctx, "Performing task", fmt.Sprintf("Process recording: %v", job.Value), enums.LogLevelInfo)
 	if err := delivery.Ack(); err != nil {
 		// handle ack error
-		CreateConsumeLog(c.logSvc, c.ctx, "Acknowledge job error", err.Error(), enums.LogLevelWarning)
+		CreateConsumeLog(c.ctx, "Acknowledge job error", err.Error(), enums.LogLevelWarning)
 	}
 }
 
-func CreateConsumeLog(logSvc logDomain.Service, ctx context.Context, subject, content string, level enums.LogLevel) {
-	var title string
-	if level == enums.LogLevelInfo {
-		title = "Scheduler Consumer Info"
-	} else if level == enums.LogLevelDanger {
-		title = "Scheduler Consumer Problem"
-	}
-	logSvc.CreateLog(ctx, &model.Log{
-		Title:   title,
-		Subject: subject,
-		Content: content,
-		Type:    enums.LogTypeSystem,
-		Level:   level,
-	})
+func CreateConsumeLog(ctx context.Context, subject, content string, level enums.LogLevel) {
+	// Log here
 }
