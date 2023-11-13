@@ -6,8 +6,8 @@ import (
 
 	"github.com/ericmarcelinotju/gram/config"
 	"github.com/ericmarcelinotju/gram/dto"
-	"github.com/ericmarcelinotju/gram/repository/database"
-	"github.com/ericmarcelinotju/gram/repository/storage"
+	"github.com/ericmarcelinotju/gram/plugins/database"
+	"github.com/ericmarcelinotju/gram/plugins/storage"
 	"github.com/go-playground/assert/v2"
 )
 
@@ -22,10 +22,10 @@ func setupService() (context.Context, Service) {
 	var fileStorage storage.Storage
 	if configuration.MediaStorage != nil {
 		// initialize File Manager
-		fileStorage, _ = storage.InitFile(configuration.MediaStorage)
+		fileStorage, _ = storage.NewFileStorage(configuration.MediaStorage)
 	}
 
-	userRepo := NewRepository(db, fileStorage)
+	userRepo := NewRepository(db, fileStorage, nil)
 	return context.Background(), NewService(userRepo)
 }
 

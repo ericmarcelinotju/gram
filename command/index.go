@@ -7,13 +7,17 @@ import (
 	"os"
 	"time"
 
-	"github.com/ericmarcelinotju/gram/domain"
 	permissionModule "github.com/ericmarcelinotju/gram/module/permission"
 	roleModule "github.com/ericmarcelinotju/gram/module/role"
 	userModule "github.com/ericmarcelinotju/gram/module/user"
-	"github.com/ericmarcelinotju/gram/repository/database/seeder"
+	"github.com/ericmarcelinotju/gram/plugins/database/seeder"
 	"gorm.io/gorm"
 )
+
+type SeederService interface {
+	Seed() error
+	Migrate() error
+}
 
 func ProcessCommands(db *gorm.DB) {
 	db = db.Session(&gorm.Session{SkipHooks: true})
@@ -26,7 +30,7 @@ func ProcessCommands(db *gorm.DB) {
 	flag.Parse()
 
 	if cmdUser != nil && len(*cmdUser) > 0 {
-		userRepo := userModule.NewRepository(db, nil)
+		userRepo := userModule.NewRepository(db, nil, nil)
 		roleRepo := roleModule.NewRepository(db)
 		permRepo := permissionModule.NewRepository(db)
 
@@ -42,7 +46,7 @@ func ProcessCommands(db *gorm.DB) {
 		os.Exit(0)
 	} else if cmdMigrate != nil && *cmdMigrate {
 		migrate := MigrateCommandFactory(
-			[]domain.SeederService{
+			[]SeederService{
 				seeder.NewAuditSeederService(db),
 				seeder.NewSettingSeederService(db),
 				seeder.NewPermissionSeederService(db),
@@ -61,7 +65,7 @@ func ProcessCommands(db *gorm.DB) {
 		os.Exit(0)
 	} else if cmdSeeding != nil && *cmdSeeding {
 		seeding := SeedingCommandFactory(
-			[]domain.SeederService{
+			[]SeederService{
 				seeder.NewSettingSeederService(db),
 				seeder.NewPermissionSeederService(db),
 				seeder.NewRoleSeederService(db),

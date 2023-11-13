@@ -5,12 +5,10 @@ import (
 	"fmt"
 	"reflect"
 	"strings"
-
-	"github.com/ericmarcelinotju/gram/domain"
 )
 
 // MigrateCommandFactory create and returns a factory to create command line functions for migration
-func MigrateCommandFactory(services []domain.SeederService) func(context.Context) error {
+func MigrateCommandFactory(services []SeederService) func(context.Context) error {
 	migrate := func(ctx context.Context) error {
 		var migrateErrors map[string]error = make(map[string]error)
 		var err error

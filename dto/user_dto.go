@@ -65,3 +65,7 @@ type GetUserDto struct {
 	*PaginationDto
 	*SortDto
 }
+
+type UserChannelDto struct {
+	Channel string `json:"channel" form:"channel" uri:"channel"`
+}

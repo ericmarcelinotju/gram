@@ -7,10 +7,10 @@ import (
 	pkgErr "github.com/pkg/errors"
 
 	"github.com/ericmarcelinotju/gram/config"
-	domainErrors "github.com/ericmarcelinotju/gram/domain/errors"
 	"github.com/ericmarcelinotju/gram/dto"
+	customErrors "github.com/ericmarcelinotju/gram/errors"
 	"github.com/ericmarcelinotju/gram/model"
-	"github.com/ericmarcelinotju/gram/repository/cache"
+	"github.com/ericmarcelinotju/gram/plugins/cache"
 
 	"gorm.io/gorm"
 )
@@ -47,23 +47,23 @@ func (s *repository) Save(ctx context.Context, name, value string) error {
 	}
 	query := s.db.WithContext(ctx).Model(&setting).Where("name = ?", name).Updates(&setting)
 	if err := query.Error; err != nil {
-		appErr := domainErrors.NewAppError(pkgErr.Wrap(err, insertError), domainErrors.CacheError)
+		appErr := customErrors.NewAppError(pkgErr.Wrap(err, insertError), customErrors.CacheError)
 		return appErr
 	}
 	if query.RowsAffected == 0 {
 		if err := s.db.WithContext(ctx).Create(&setting).Error; err != nil {
-			appErr := domainErrors.NewAppError(pkgErr.Wrap(err, insertError), domainErrors.DatabaseError)
+			appErr := customErrors.NewAppError(pkgErr.Wrap(err, insertError), customErrors.DatabaseError)
 			return appErr
 		}
 	}
 
 	if err := s.cache.Del(ctx, "setting"); err != nil {
-		appErr := domainErrors.NewAppError(pkgErr.Wrap(err, insertError), domainErrors.CacheError)
+		appErr := customErrors.NewAppError(pkgErr.Wrap(err, insertError), customErrors.CacheError)
 		return appErr
 	}
 
 	if err := s.cache.Set(ctx, "setting-"+name, value, config.Get().Cache.DefaultExpiry); err != nil {
-		appErr := domainErrors.NewAppError(pkgErr.Wrap(err, insertError), domainErrors.CacheError)
+		appErr := customErrors.NewAppError(pkgErr.Wrap(err, insertError), customErrors.CacheError)
 		return appErr
 	}
 
@@ -89,12 +89,12 @@ func (s *repository) Select(ctx context.Context) ([]dto.SettingDto, error) {
 		Find(&entities)
 
 	if errors.Is(query.Error, gorm.ErrRecordNotFound) {
-		appErr := domainErrors.NewAppError(pkgErr.Wrap(query.Error, selectError), domainErrors.NotFoundError)
+		appErr := customErrors.NewAppError(pkgErr.Wrap(query.Error, selectError), customErrors.NotFoundError)
 		return nil, appErr
 	}
 
 	if err := query.Error; err != nil {
-		appErr := domainErrors.NewAppError(pkgErr.Wrap(err, selectError), domainErrors.DatabaseError)
+		appErr := customErrors.NewAppError(pkgErr.Wrap(err, selectError), customErrors.DatabaseError)
 		return nil, appErr
 	}
 
@@ -104,7 +104,7 @@ func (s *repository) Select(ctx context.Context) ([]dto.SettingDto, error) {
 	}
 
 	if err := s.cache.Set(ctx, key, entities, config.Get().Cache.DefaultExpiry); err != nil {
-		appErr := domainErrors.NewAppError(pkgErr.Wrap(err, selectError), domainErrors.CacheError)
+		appErr := customErrors.NewAppError(pkgErr.Wrap(err, selectError), customErrors.CacheError)
 		return nil, appErr
 	}
 
@@ -127,17 +127,17 @@ func (s *repository) SelectByName(ctx context.Context, name string) (string, err
 		First(&entity)
 
 	if errors.Is(query.Error, gorm.ErrRecordNotFound) {
-		appErr := domainErrors.NewAppError(pkgErr.Wrap(query.Error, selectError), domainErrors.NotFoundError)
+		appErr := customErrors.NewAppError(pkgErr.Wrap(query.Error, selectError), customErrors.NotFoundError)
 		return "", appErr
 	}
 
 	if err := query.Error; err != nil {
-		appErr := domainErrors.NewAppError(pkgErr.Wrap(err, selectError), domainErrors.DatabaseError)
+		appErr := customErrors.NewAppError(pkgErr.Wrap(err, selectError), customErrors.DatabaseError)
 		return "", appErr
 	}
 
 	if err := s.cache.Set(ctx, key, entity.Value, config.Get().Cache.DefaultExpiry); err != nil {
-		appErr := domainErrors.NewAppError(pkgErr.Wrap(err, selectError), domainErrors.CacheError)
+		appErr := customErrors.NewAppError(pkgErr.Wrap(err, selectError), customErrors.CacheError)
 		return "", appErr
 	}
 
@@ -146,17 +146,17 @@ func (s *repository) SelectByName(ctx context.Context, name string) (string, err
 
 func (s *repository) Delete(ctx context.Context, name string) error {
 	if err := s.db.WithContext(ctx).Where("name = ?", name).Delete(&model.SettingEntity{}).Error; err != nil {
-		appErr := domainErrors.NewAppError(pkgErr.Wrap(err, deleteError), domainErrors.DatabaseError)
+		appErr := customErrors.NewAppError(pkgErr.Wrap(err, deleteError), customErrors.DatabaseError)
 		return appErr
 	}
 
 	if err := s.cache.Del(ctx, "setting"); err != nil {
-		appErr := domainErrors.NewAppError(pkgErr.Wrap(err, insertError), domainErrors.CacheError)
+		appErr := customErrors.NewAppError(pkgErr.Wrap(err, insertError), customErrors.CacheError)
 		return appErr
 	}
 
 	if err := s.cache.Del(ctx, "setting-"+name); err != nil {
-		appErr := domainErrors.NewAppError(pkgErr.Wrap(err, deleteError), domainErrors.CacheError)
+		appErr := customErrors.NewAppError(pkgErr.Wrap(err, deleteError), customErrors.CacheError)
 		return appErr
 	}
 

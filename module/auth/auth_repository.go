@@ -13,12 +13,11 @@ import (
 	"github.com/google/uuid"
 	pkgErr "github.com/pkg/errors"
 
-	domainErrors "github.com/ericmarcelinotju/gram/domain/errors"
 	"github.com/ericmarcelinotju/gram/dto"
-	"github.com/ericmarcelinotju/gram/library/email"
+	customErrors "github.com/ericmarcelinotju/gram/errors"
 	"github.com/ericmarcelinotju/gram/model"
-	"github.com/ericmarcelinotju/gram/repository/cache"
-	"github.com/ericmarcelinotju/gram/repository/notifier"
+	"github.com/ericmarcelinotju/gram/plugins/cache"
+	"github.com/ericmarcelinotju/gram/plugins/notifier"
 	"github.com/ericmarcelinotju/gram/utils/crypt"
 )
 
@@ -63,11 +62,11 @@ func (s *repository) Login(ctx context.Context, username string, password string
 		Preload("Role.Permissions").
 		First(&result, "username = ?", username)
 	if err = query.Error; err != nil {
-		err = domainErrors.NewAppError(pkgErr.Wrap(err, loginError), domainErrors.NotAuthorized)
+		err = customErrors.NewAppError(pkgErr.Wrap(err, loginError), customErrors.NotAuthorized)
 		return nil, "", err
 	}
 	if !crypt.CompareHash(result.Password, password) {
-		err = domainErrors.NewAppError(pkgErr.Wrap(err, loginError), domainErrors.NotAuthorized)
+		err = customErrors.NewAppError(pkgErr.Wrap(err, loginError), customErrors.NotAuthorized)
 		return nil, "", err
 	}
 
@@ -84,7 +83,7 @@ func (s *repository) Login(ctx context.Context, username string, password string
 	now := time.Now()
 	result.LastLogin = &now
 	if err = s.db.WithContext(ctx).Model(&result).Updates(result).Error; err != nil {
-		err = domainErrors.NewAppError(pkgErr.Wrap(err, loginError), domainErrors.DatabaseError)
+		err = customErrors.NewAppError(pkgErr.Wrap(err, loginError), customErrors.DatabaseError)
 		return nil, "", err
 	}
 
@@ -105,11 +104,11 @@ func (s *repository) Login(ctx context.Context, username string, password string
 func (s *repository) Logout(ctx context.Context, token string) error {
 	err := s.cache.Get(ctx, token, nil)
 	if err != nil {
-		return domainErrors.NewAppError(errors.New("token not registered"), domainErrors.NotAuthorized)
+		return customErrors.NewAppError(errors.New("token not registered"), customErrors.NotAuthorized)
 	}
 	err = s.cache.Del(ctx, token)
 	if err != nil {
-		return domainErrors.NewAppError(errors.New("failed to delete token"), domainErrors.NotAuthorized)
+		return customErrors.NewAppError(errors.New("failed to delete token"), customErrors.NotAuthorized)
 	}
 
 	ginCtx, ok := ctx.(*gin.Context)
@@ -129,7 +128,7 @@ func (s *repository) Logout(ctx context.Context, token string) error {
 func (s *repository) ReadUserByToken(ctx context.Context, token string) (user *dto.UserDto, err error) {
 	err = s.cache.Get(ctx, token, &user)
 	if err != nil {
-		err = domainErrors.NewAppError(errors.New("token not registered"), domainErrors.NotAuthorized)
+		err = customErrors.NewAppError(errors.New("token not registered"), customErrors.NotAuthorized)
 	}
 	return
 }
@@ -138,16 +137,16 @@ func (s *repository) ForgotPassword(ctx context.Context, payload *dto.UserDto) e
 	token := uuid.New().String()
 	err := s.cache.Set(ctx, token, payload, time.Minute*30)
 	if err != nil {
-		return domainErrors.NewAppError(pkgErr.Wrap(err, forgotError), domainErrors.CacheError)
+		return customErrors.NewAppError(pkgErr.Wrap(err, forgotError), customErrors.CacheError)
 	}
 
 	err = s.notifier.Notify(
 		"Password Reset",
-		email.EmailContent{Data: os.Getenv("FRONTEND_URL") + "#/forgot-password?fpkey=" + token},
+		notifier.EmailContent{Data: os.Getenv("FRONTEND_URL") + "#/forgot-password?fpkey=" + token},
 		payload,
 	)
 	if err != nil {
-		return domainErrors.NewAppError(pkgErr.Wrap(err, forgotError), domainErrors.RepositoryError)
+		return customErrors.NewAppError(pkgErr.Wrap(err, forgotError), customErrors.RepositoryError)
 	}
 	return nil
 }

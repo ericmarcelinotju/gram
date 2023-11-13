@@ -5,12 +5,10 @@ import (
 	"fmt"
 	"reflect"
 	"strings"
-
-	"github.com/ericmarcelinotju/gram/domain"
 )
 
 // SeedingCommandFactory create and returns a factory to create command line functions for seeding
-func SeedingCommandFactory(services []domain.SeederService) func(context.Context) error {
+func SeedingCommandFactory(services []SeederService) func(context.Context) error {
 	seed := func(ctx context.Context) error {
 		var seedErrors map[string]error = make(map[string]error)
 		var err error
@@ -24,7 +22,7 @@ func SeedingCommandFactory(services []domain.SeederService) func(context.Context
 			}
 
 			fmt.Printf("Seeding %s\n", serviceName)
-			err = service.Seeding()
+			err = service.Seed()
 			seedErrors[serviceName] = nil
 			if err != nil {
 				seedErrors[serviceName] = err

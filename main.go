@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"html/template"
 	"log"
 	"net/http"
@@ -8,28 +9,23 @@ import (
 
 	"github.com/ericmarcelinotju/gram/command"
 	"github.com/ericmarcelinotju/gram/config"
-	"github.com/ericmarcelinotju/gram/library/email"
 
-	"github.com/ericmarcelinotju/gram/repository/cache"
-	"github.com/ericmarcelinotju/gram/repository/database"
-	"github.com/ericmarcelinotju/gram/repository/job"
-	"github.com/ericmarcelinotju/gram/repository/notifier"
-	"github.com/ericmarcelinotju/gram/repository/storage"
+	"github.com/ericmarcelinotju/gram/plugins/cache"
+	"github.com/ericmarcelinotju/gram/plugins/database"
+	"github.com/ericmarcelinotju/gram/plugins/job"
+	"github.com/ericmarcelinotju/gram/plugins/notifier"
+	"github.com/ericmarcelinotju/gram/plugins/storage"
 
-	mediaStore "github.com/ericmarcelinotju/gram/repository/media"
-
-	websocketStore "github.com/ericmarcelinotju/gram/repository/websocket"
 	authModule "github.com/ericmarcelinotju/gram/module/auth"
 	permissionModule "github.com/ericmarcelinotju/gram/module/permission"
 	roleModule "github.com/ericmarcelinotju/gram/module/role"
 	settingModule "github.com/ericmarcelinotju/gram/module/setting"
 	userModule "github.com/ericmarcelinotju/gram/module/user"
+	websocketStore "github.com/ericmarcelinotju/gram/plugins/websocket"
+
+	exampleScheduler "github.com/ericmarcelinotju/gram/scheduler/example"
 
 	router "github.com/ericmarcelinotju/gram/router"
-
-	"github.com/ericmarcelinotju/gram/domain/media"
-
-	wsDomain "github.com/ericmarcelinotju/gram/domain/websocket"
 )
 
 // @securityDefinitions.apikey Auth
@@ -51,8 +47,8 @@ func main() {
 		log.Fatalln("[REDIS] : ", err)
 	}
 
-	// establish backup queue using redis
-	backupQueue, err := job.ConnectQueue(
+	// establish job queue using redis
+	jobQueue, err := job.ConnectQueue(
 		&config.Queue{
 			Name:            "queue",
 			Number:          3,
@@ -67,7 +63,7 @@ func main() {
 	}
 
 	// initialize websocket dispatcher
-	dispatcher, err := websocketStore.Init()
+	dispatcher, err := websocketStore.NewDispatcher()
 	if err != nil {
 		log.Fatalln("[WEBSOCKET] : ", err)
 	}
@@ -75,27 +71,40 @@ func main() {
 	var mediaStorage storage.Storage
 	if configuration.MediaStorage != nil {
 		// initialize File Manager
-		mediaStorage, err = storage.InitFile(configuration.MediaStorage)
+		mediaStorage, err = storage.NewFileStorage(configuration.MediaStorage)
 		if err != nil {
 			log.Println("[FILE STORAGE] : ", err)
 		}
 	}
 
 	// initialize scheduler for backup worker
-	var firstBackupScheduler *job.Scheduler
-	var secondBackupScheduler *job.Scheduler
+	var scheduler *job.Scheduler
 
-	var forgotEmail *email.Emailer
+	var forgotEmail *notifier.EmailNotifier
 
 	settingRepo := settingModule.NewRepository(db, redisCache)
 
+	authRepo := authModule.NewRepository(db, redisCache, forgotEmail)
+
+	userRepo := userModule.NewRepository(db, mediaStorage, dispatcher)
+	roleRepo := roleModule.NewRepository(db)
+	permissionRepo := permissionModule.NewRepository(db)
+
+	authSvc := authModule.NewService(authRepo, userRepo)
+
+	userSvc := userModule.NewService(userRepo)
+	roleSvc := roleModule.NewService(roleRepo)
+	permissionSvc := permissionModule.NewService(permissionRepo)
+
+	settingSvc := settingModule.NewService(settingRepo, scheduler, forgotEmail)
+
 	// Setup smtp from setting
-	smtpConf, err := notifier.GetSMTPConfig(settingRepo)
+	smtpConf, err := settingSvc.GetSMTPConfig(context.Background())
 	if err != nil {
 		log.Println("[NOREPLY EMAIL] : ", err)
 	}
 	if smtpConf != nil {
-		forgotEmail, err = notifier.InitEmailer(
+		forgotEmail, err = notifier.NewEmailNotifier(
 			smtpConf,
 			template.Must(template.ParseFiles("./email/template/forgot.html")),
 		)
@@ -104,34 +113,16 @@ func main() {
 		}
 	}
 
-	authRepo := authModule.NewRepository(db, redisCache, forgotEmail)
-	mediaRepo := mediaStore.New(mediaStorage)
-
-	userRepo := userModule.NewRepository(db, mediaStorage)
-	roleRepo := roleModule.NewRepository(db)
-	permissionRepo := permissionModule.NewRepository(db)
-
-	authSvc := authModule.NewService(authRepo, userRepo)
-	mediaSvc := media.NewService(mediaRepo)
-
-	userSvc := userModule.NewService(userRepo)
-	roleSvc := roleModule.NewService(roleRepo)
-	permissionSvc := permissionModule.NewService(permissionRepo)
-
-	settingSvc := settingModule.NewService(settingRepo, firstBackupScheduler, secondBackupScheduler, forgotEmail)
-
-	//websocket
-	wsRepo, err := websocketStore.New(dispatcher)
-	if err != nil {
-		log.Fatalln("[WEBSOCKET] : ", err)
-	}
-	websocketSvc := wsDomain.NewService(wsRepo)
-
 	command.ProcessCommands(db)
+
+	exampleScheduler, err := exampleScheduler.NewScheduler(jobQueue)
+	if err != nil {
+		log.Fatalln(err)
+	}
+	exampleScheduler.Start()
 
 	router := router.NewHTTPHandler(
 		authSvc,
-		mediaSvc,
 
 		userSvc,
 		roleSvc,
@@ -139,11 +130,9 @@ func main() {
 
 		settingSvc,
 
-		websocketSvc,
-
-		backupQueue.Connection,
-
-		backupQueue,
+		// TODO :: fix this shit
+		jobQueue.Connection,
+		jobQueue,
 	)
 	log.Println("Start Listening to : " + configuration.Port)
 	err = http.ListenAndServe(":"+configuration.Port, router)

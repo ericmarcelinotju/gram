@@ -7,10 +7,10 @@ import (
 	"github.com/ericmarcelinotju/gram/config"
 	"github.com/ericmarcelinotju/gram/dto"
 	"github.com/ericmarcelinotju/gram/module/user"
-	"github.com/ericmarcelinotju/gram/repository/cache"
-	"github.com/ericmarcelinotju/gram/repository/database"
-	"github.com/ericmarcelinotju/gram/repository/notifier"
-	"github.com/ericmarcelinotju/gram/repository/storage"
+	"github.com/ericmarcelinotju/gram/plugins/cache"
+	"github.com/ericmarcelinotju/gram/plugins/database"
+	"github.com/ericmarcelinotju/gram/plugins/notifier"
+	"github.com/ericmarcelinotju/gram/plugins/storage"
 	"github.com/go-playground/assert/v2"
 )
 
@@ -32,11 +32,11 @@ func setupService() (context.Context, Service) {
 	var fileStorage storage.Storage
 	if configuration.MediaStorage != nil {
 		// initialize File Manager
-		fileStorage, _ = storage.InitFile(configuration.MediaStorage)
+		fileStorage, _ = storage.NewFileStorage(configuration.MediaStorage)
 	}
 
 	repo := NewRepository(db, cache, emailer)
-	userRepo := user.NewRepository(db, fileStorage)
+	userRepo := user.NewRepository(db, fileStorage, nil)
 	return context.Background(), NewService(repo, userRepo)
 }
 

@@ -10,8 +10,8 @@ import (
 	"github.com/ericmarcelinotju/gram/config"
 	"github.com/ericmarcelinotju/gram/constant"
 	"github.com/ericmarcelinotju/gram/dto"
-	"github.com/ericmarcelinotju/gram/library/email"
-	"github.com/ericmarcelinotju/gram/repository/job"
+	"github.com/ericmarcelinotju/gram/plugins/job"
+	"github.com/ericmarcelinotju/gram/plugins/notifier"
 )
 
 // Service defines Setting service behavior.
@@ -21,27 +21,27 @@ type Service interface {
 	Save(context.Context, *dto.PostSettingDto) error
 
 	GetSchedulerTime(context.Context, string) (int, int, error)
+
+	GetSFTPConfig(ctx context.Context) (*config.Storage, error)
+	GetSMTPConfig(ctx context.Context) (*config.Email, error)
 }
 
 type service struct {
-	repo                  Repository
-	firstBackupScheduler  *job.Scheduler
-	secondBackupScheduler *job.Scheduler
-	forgotEmail           *email.Emailer
+	repo        Repository
+	scheduler   *job.Scheduler
+	forgotEmail *notifier.EmailNotifier
 }
 
 // NewService creates a new service struct
 func NewService(
 	repo Repository,
-	firstBackupScheduler *job.Scheduler,
-	secondBackupScheduler *job.Scheduler,
-	forgotEmail *email.Emailer,
+	scheduler *job.Scheduler,
+	forgotEmail *notifier.EmailNotifier,
 ) *service {
 	return &service{
-		repo:                  repo,
-		firstBackupScheduler:  firstBackupScheduler,
-		secondBackupScheduler: secondBackupScheduler,
-		forgotEmail:           forgotEmail,
+		repo:        repo,
+		scheduler:   scheduler,
+		forgotEmail: forgotEmail,
 	}
 }
 
@@ -129,5 +129,30 @@ func (svc *service) GetSFTPConfig(ctx context.Context) (*config.Storage, error) 
 		Host:     fmt.Sprintf("%s:%s", sftpHost, sftpPort),
 		Username: sftpUsername,
 		Password: sftpPassword,
+	}, nil
+}
+
+func (svc *service) GetSMTPConfig(ctx context.Context) (*config.Email, error) {
+	noreplyHost, err := svc.repo.SelectByName(ctx, constant.SMTPHost)
+	if err != nil {
+		return nil, err
+	}
+	noreplyPort, err := svc.repo.SelectByName(ctx, constant.SMTPPort)
+	if err != nil {
+		return nil, err
+	}
+	noreplyEmail, err := svc.repo.SelectByName(ctx, constant.SMTPEmail)
+	if err != nil {
+		return nil, err
+	}
+	noreplyPassword, err := svc.repo.SelectByName(ctx, constant.SMTPPassword)
+	if err != nil {
+		return nil, err
+	}
+	return &config.Email{
+		Host:     noreplyHost,
+		Port:     noreplyPort,
+		Email:    noreplyEmail,
+		Password: noreplyPassword,
 	}, nil
 }

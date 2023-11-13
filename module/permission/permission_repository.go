@@ -6,8 +6,8 @@ import (
 
 	pkgErr "github.com/pkg/errors"
 
-	domainErrors "github.com/ericmarcelinotju/gram/domain/errors"
 	"github.com/ericmarcelinotju/gram/dto"
+	customErrors "github.com/ericmarcelinotju/gram/errors"
 	"github.com/ericmarcelinotju/gram/model"
 
 	"gorm.io/gorm"
@@ -42,7 +42,7 @@ func (s *repository) Insert(ctx context.Context, payload *dto.PermissionDto) err
 	entity := model.NewPermissionEntity(payload)
 
 	if err := s.db.WithContext(ctx).Create(entity).Error; err != nil {
-		appErr := domainErrors.NewAppError(pkgErr.Wrap(err, insertError), domainErrors.DatabaseError)
+		appErr := customErrors.NewAppError(pkgErr.Wrap(err, insertError), customErrors.DatabaseError)
 		return appErr
 	}
 
@@ -55,7 +55,7 @@ func (s *repository) Update(ctx context.Context, payload *dto.PermissionDto) err
 	entity := model.NewPermissionEntity(payload)
 
 	if err := s.db.WithContext(ctx).Model(entity).Updates(entity).Error; err != nil {
-		appErr := domainErrors.NewAppError(pkgErr.Wrap(err, updateError), domainErrors.DatabaseError)
+		appErr := customErrors.NewAppError(pkgErr.Wrap(err, updateError), customErrors.DatabaseError)
 		return appErr
 	}
 
@@ -87,12 +87,12 @@ func (s *repository) Select(
 	query.Find(&entities)
 
 	if errors.Is(query.Error, gorm.ErrRecordNotFound) {
-		appErr := domainErrors.NewAppError(pkgErr.Wrap(query.Error, selectError), domainErrors.NotFoundError)
+		appErr := customErrors.NewAppError(pkgErr.Wrap(query.Error, selectError), customErrors.NotFoundError)
 		return nil, total, appErr
 	}
 
 	if err := query.Error; err != nil {
-		appErr := domainErrors.NewAppError(pkgErr.Wrap(err, selectError), domainErrors.DatabaseError)
+		appErr := customErrors.NewAppError(pkgErr.Wrap(err, selectError), customErrors.DatabaseError)
 		return nil, total, appErr
 	}
 
@@ -110,7 +110,7 @@ func (s *repository) SelectById(ctx context.Context, id string) (*dto.Permission
 	if err := s.db.WithContext(ctx).
 		Model(&model.PermissionEntity{}).
 		First(&permission, "id = ?", id).Error; err != nil {
-		appErr := domainErrors.NewAppError(pkgErr.Wrap(err, selectError), domainErrors.DatabaseError)
+		appErr := customErrors.NewAppError(pkgErr.Wrap(err, selectError), customErrors.DatabaseError)
 		return nil, appErr
 	}
 
@@ -121,7 +121,7 @@ func (s *repository) Delete(ctx context.Context, payload *dto.PermissionDto) err
 	entity := model.NewPermissionEntity(payload)
 
 	if err := s.db.WithContext(ctx).Delete(entity).Error; err != nil {
-		appErr := domainErrors.NewAppError(pkgErr.Wrap(err, deleteError), domainErrors.DatabaseError)
+		appErr := customErrors.NewAppError(pkgErr.Wrap(err, deleteError), customErrors.DatabaseError)
 		return appErr
 	}
 

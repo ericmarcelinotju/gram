@@ -5,9 +5,10 @@ import (
 	"fmt"
 	"time"
 
-	domainErrors "github.com/ericmarcelinotju/gram/domain/errors"
 	"github.com/ericmarcelinotju/gram/dto"
+	customErrors "github.com/ericmarcelinotju/gram/errors"
 	"github.com/ericmarcelinotju/gram/utils/crypt"
+	"github.com/gorilla/websocket"
 )
 
 // Service defines user service behavior.
@@ -20,6 +21,8 @@ type Service interface {
 	UpdatePassword(context.Context, *dto.ChangeUserPasswordDto) error
 
 	DeleteById(context.Context, string) error
+
+	Connect(*websocket.Conn, *dto.UserChannelDto) error
 }
 
 type service struct {
@@ -114,10 +117,10 @@ func (svc *service) Update(ctx context.Context, payload *dto.PutUserDto) (res *d
 func (svc *service) UpdatePassword(ctx context.Context, payload *dto.ChangeUserPasswordDto) error {
 	user, err := svc.repo.SelectById(ctx, payload.Id)
 	if err != nil {
-		return domainErrors.NewAppError(err, domainErrors.NotFoundError)
+		return customErrors.NewAppError(err, customErrors.NotFoundError)
 	}
 	if crypt.CompareHash(user.Password, payload.OldPassword) {
-		return domainErrors.NewAppError(err, domainErrors.NotAuthorized)
+		return customErrors.NewAppError(err, customErrors.NotAuthorized)
 	}
 	return svc.repo.UpdatePassword(ctx, payload.Id, payload.NewPassword)
 }
@@ -132,4 +135,8 @@ func (svc *service) DeleteById(ctx context.Context, id string) error {
 		return svc.repo.RemoveAvatar(*payload.Avatar)
 	}
 	return nil
+}
+
+func (svc *service) Connect(conn *websocket.Conn, channel *dto.UserChannelDto) error {
+	return svc.repo.Connect(conn, channel)
 }

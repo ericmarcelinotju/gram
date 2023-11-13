@@ -10,17 +10,15 @@ import (
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 
-	"github.com/ericmarcelinotju/gram/domain/websocket"
 	authModule "github.com/ericmarcelinotju/gram/module/auth"
 	healthModule "github.com/ericmarcelinotju/gram/module/health"
 	permissionModule "github.com/ericmarcelinotju/gram/module/permission"
 	roleModule "github.com/ericmarcelinotju/gram/module/role"
 	settingModule "github.com/ericmarcelinotju/gram/module/setting"
 	userModule "github.com/ericmarcelinotju/gram/module/user"
-	"github.com/ericmarcelinotju/gram/repository/job"
+	"github.com/ericmarcelinotju/gram/plugins/job"
 
 	swaggerRoutes "github.com/ericmarcelinotju/gram/router/swagger"
-	websocketRoutes "github.com/ericmarcelinotju/gram/router/websocket"
 
 	"github.com/ericmarcelinotju/gram/router/middleware"
 
@@ -36,8 +34,6 @@ func NewHTTPHandler(
 	permissionSvc permissionModule.Service,
 
 	settingSvc settingModule.Service,
-
-	websocketSvc websocket.WebsocketService,
 
 	queueConnection rmq.Connection,
 
@@ -88,9 +84,6 @@ func NewHTTPHandler(
 		permissionModule.NewRoutesFactory(authGroup)(permissionSvc)
 		settingModule.NewRoutesFactory(authGroup)(settingSvc)
 	}
-
-	wsGroup := router.Group("/ws")
-	websocketRoutes.NewRoutesFactory(wsGroup)(websocketSvc)
 
 	swaggerRoutes.Init(router.Group("swagger"))()
 

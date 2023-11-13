@@ -8,12 +8,14 @@ import (
 
 	"gorm.io/gorm"
 
+	"github.com/gorilla/websocket"
 	pkgErr "github.com/pkg/errors"
 
-	domainErrors "github.com/ericmarcelinotju/gram/domain/errors"
 	"github.com/ericmarcelinotju/gram/dto"
+	customErrors "github.com/ericmarcelinotju/gram/errors"
 	"github.com/ericmarcelinotju/gram/model"
-	"github.com/ericmarcelinotju/gram/repository/storage"
+	"github.com/ericmarcelinotju/gram/plugins/storage"
+	ws "github.com/ericmarcelinotju/gram/plugins/websocket"
 	"github.com/ericmarcelinotju/gram/utils/crypt"
 )
 
@@ -36,21 +38,26 @@ type Repository interface {
 
 	SaveAvatar(file *multipart.File, filename string) error
 	RemoveAvatar(filename string) error
+
+	Connect(*websocket.Conn, *dto.UserChannelDto) error
 }
 
 type repository struct {
-	db      *gorm.DB
-	storage storage.Storage
+	db         *gorm.DB
+	storage    storage.Storage
+	dispatcher *ws.Dispatcher
 }
 
 // New creates a new repository struct
 func NewRepository(
 	db *gorm.DB,
 	storage storage.Storage,
+	dispatcher *ws.Dispatcher,
 ) *repository {
 	return &repository{
-		db:      db,
-		storage: storage,
+		db:         db,
+		storage:    storage,
+		dispatcher: dispatcher,
 	}
 }
 
@@ -64,7 +71,7 @@ func (s *repository) Insert(ctx context.Context, payload *dto.UserDto) error {
 	entity.Password = hashedPassword
 
 	if err := s.db.WithContext(ctx).Create(entity).Error; err != nil {
-		appErr := domainErrors.NewAppError(pkgErr.Wrap(err, insertError), domainErrors.DatabaseError)
+		appErr := customErrors.NewAppError(pkgErr.Wrap(err, insertError), customErrors.DatabaseError)
 		return appErr
 	}
 	payload.Id = entity.Id.String()
@@ -75,7 +82,7 @@ func (s *repository) Update(ctx context.Context, payload *dto.UserDto) error {
 	entity := model.NewUserEntity(payload)
 
 	if err := s.db.WithContext(ctx).Model(entity).Updates(entity).Error; err != nil {
-		appErr := domainErrors.NewAppError(pkgErr.Wrap(err, updateError), domainErrors.DatabaseError)
+		appErr := customErrors.NewAppError(pkgErr.Wrap(err, updateError), customErrors.DatabaseError)
 		return appErr
 	}
 	payload.Id = entity.Id.String()
@@ -89,7 +96,7 @@ func (s *repository) UpdatePassword(ctx context.Context, id string, password str
 	}
 
 	if err := s.db.WithContext(ctx).Model(&model.UserEntity{}).Where("id = ?", id).Update("password", hashedPassword).Error; err != nil {
-		appErr := domainErrors.NewAppError(pkgErr.Wrap(err, updateError), domainErrors.DatabaseError)
+		appErr := customErrors.NewAppError(pkgErr.Wrap(err, updateError), customErrors.DatabaseError)
 		return appErr
 	}
 	return nil
@@ -122,7 +129,7 @@ func (s *repository) Select(
 	query.Find(&entities)
 
 	if err := query.Error; err != nil {
-		appErr := domainErrors.NewAppError(pkgErr.Wrap(err, selectError), domainErrors.DatabaseError)
+		appErr := customErrors.NewAppError(pkgErr.Wrap(err, selectError), customErrors.DatabaseError)
 		return nil, total, appErr
 	}
 
@@ -143,7 +150,7 @@ func (s *repository) SelectById(ctx context.Context, id string) (*dto.UserDto, e
 		First(&result, "id = ?", id)
 
 	if errors.Is(query.Error, gorm.ErrRecordNotFound) {
-		appErr := domainErrors.NewAppError(pkgErr.Wrap(query.Error, selectError), domainErrors.NotFoundError)
+		appErr := customErrors.NewAppError(pkgErr.Wrap(query.Error, selectError), customErrors.NotFoundError)
 		return nil, appErr
 	}
 
@@ -162,12 +169,12 @@ func (s *repository) SelectByUsername(ctx context.Context, id string) (*dto.User
 		First(&result, "username = ?", id)
 
 	if errors.Is(query.Error, gorm.ErrRecordNotFound) {
-		appErr := domainErrors.NewAppError(pkgErr.Wrap(query.Error, selectError), domainErrors.NotFoundError)
+		appErr := customErrors.NewAppError(pkgErr.Wrap(query.Error, selectError), customErrors.NotFoundError)
 		return nil, appErr
 	}
 
 	if err := query.Error; err != nil {
-		appErr := domainErrors.NewAppError(pkgErr.Wrap(err, selectError), domainErrors.RepositoryError)
+		appErr := customErrors.NewAppError(pkgErr.Wrap(err, selectError), customErrors.RepositoryError)
 		return nil, appErr
 	}
 	return result.ToDto(), nil
@@ -177,7 +184,7 @@ func (s *repository) Delete(ctx context.Context, payload *dto.UserDto) error {
 	entity := model.NewUserEntity(payload)
 
 	if err := s.db.WithContext(ctx).First(entity).Delete(entity).Error; err != nil {
-		appErr := domainErrors.NewAppError(pkgErr.Wrap(err, deleteError), domainErrors.DatabaseError)
+		appErr := customErrors.NewAppError(pkgErr.Wrap(err, deleteError), customErrors.DatabaseError)
 		return appErr
 	}
 	payload.Avatar = entity.Avatar
@@ -187,11 +194,11 @@ func (s *repository) Delete(ctx context.Context, payload *dto.UserDto) error {
 
 func (s *repository) SaveAvatar(file *multipart.File, filename string) error {
 	if file == nil {
-		appErr := domainErrors.NewAppError(errors.New("uploaded file empty"), domainErrors.ValidationError)
+		appErr := customErrors.NewAppError(errors.New("uploaded file empty"), customErrors.ValidationError)
 		return appErr
 	}
 	if err := s.storage.Upload(*file, filename); err != nil {
-		appErr := domainErrors.NewAppError(fmt.Errorf("upload file failed: %w", err), domainErrors.RepositoryError)
+		appErr := customErrors.NewAppError(fmt.Errorf("upload file failed: %w", err), customErrors.RepositoryError)
 		return appErr
 	}
 	return nil
@@ -199,4 +206,16 @@ func (s *repository) SaveAvatar(file *multipart.File, filename string) error {
 
 func (s *repository) RemoveAvatar(filename string) error {
 	return s.storage.Remove(filename)
+}
+
+func (s *repository) Connect(conn *websocket.Conn, channel *dto.UserChannelDto) error {
+	client := ws.NewClient(s.dispatcher, conn, channel.Channel)
+	s.dispatcher.Register <- client
+
+	// Allow collection of memory referenced by the caller by doing all work in
+	// new goroutines.
+	go client.WriteDispatch()
+	go client.ReadDispatch()
+
+	return nil
 }

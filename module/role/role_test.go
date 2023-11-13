@@ -6,7 +6,7 @@ import (
 
 	"github.com/ericmarcelinotju/gram/config"
 	"github.com/ericmarcelinotju/gram/dto"
-	"github.com/ericmarcelinotju/gram/repository/database"
+	"github.com/ericmarcelinotju/gram/plugins/database"
 	"github.com/go-playground/assert/v2"
 )
 
