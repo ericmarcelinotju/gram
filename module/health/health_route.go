@@ -3,7 +3,7 @@ package health
 import (
 	"time"
 
-	response "github.com/ericmarcelinotju/gram/utils/http"
+	"github.com/ericmarcelinotju/gram/utils/response"
 	"github.com/gin-gonic/gin"
 )
 

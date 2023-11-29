@@ -51,27 +51,34 @@ func (svc *service) Create(ctx context.Context, payload *dto.PostUserDto) (res *
 	}
 
 	res = &dto.UserDto{
-		Username:   payload.Username,
-		Lastname:   payload.Lastname,
-		Department: payload.Department,
-		Title:      payload.Title,
-		Email:      payload.Email,
-		Password:   payload.Password,
-		Avatar:     avatar,
-		RoleId:     payload.RoleId,
+		Name:     payload.Name,
+		Lastname: payload.Lastname,
+		Title:    payload.Title,
+		Email:    payload.Email,
+		Password: payload.Password,
+		Avatar:   avatar,
+		RoleId:   payload.RoleId,
 	}
 	err = svc.repo.Insert(ctx, res)
 	return
 }
 
 func (svc *service) Read(ctx context.Context, payload *dto.GetUserDto) ([]dto.UserDto, int64, error) {
+	filter := &dto.UserDto{}
+
+	if payload.Name != nil {
+		filter.Name = *payload.Name
+	}
+	if payload.Email != nil {
+		filter.Email = *payload.Email
+	}
+	if payload.RoleId != nil {
+		filter.RoleId = *payload.RoleId
+	}
+
 	return svc.repo.Select(
 		ctx,
-		&dto.UserDto{
-			Username: *payload.Username,
-			Email:    *payload.Email,
-			RoleId:   *payload.RoleId,
-		},
+		filter,
 		payload.PaginationDto,
 		payload.SortDto,
 	)
@@ -102,13 +109,12 @@ func (svc *service) Update(ctx context.Context, payload *dto.PutUserDto) (res *d
 	}
 
 	res = &dto.UserDto{
-		Username:   payload.Username,
-		Lastname:   payload.Lastname,
-		Department: payload.Department,
-		Title:      payload.Title,
-		Email:      payload.Email,
-		Avatar:     avatar,
-		RoleId:     payload.RoleId,
+		Name:     payload.Name,
+		Lastname: payload.Lastname,
+		Title:    payload.Title,
+		Email:    payload.Email,
+		Avatar:   avatar,
+		RoleId:   payload.RoleId,
 	}
 	err = svc.repo.Insert(ctx, res)
 	return

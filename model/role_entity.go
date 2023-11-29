@@ -18,10 +18,10 @@ type RoleEntity struct {
 
 // RolePermissions struct defines the database model for a role permission.
 type RolePermissionEntity struct {
-	RoleID       uuid.UUID        `gorm:"primaryKey;type:uuid"`
-	Role         RoleEntity       `gorm:"foreignKey:RoleID"`
-	PermissionID uuid.UUID        `gorm:"primaryKey;type:uuid"`
-	Permission   PermissionEntity `gorm:"foreignKey:PermissionID"`
+	RoleId       uuid.UUID        `gorm:"primaryKey;type:uuid"`
+	Role         RoleEntity       `gorm:"foreignKey:RoleId"`
+	PermissionId uuid.UUID        `gorm:"primaryKey;type:uuid"`
+	Permission   PermissionEntity `gorm:"foreignKey:PermissionId"`
 	CreatedAt    time.Time
 	UpdatedAt    time.Time
 	DeletedAt    gorm.DeletedAt

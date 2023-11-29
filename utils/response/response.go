@@ -1,4 +1,4 @@
-package http
+package response
 
 import (
 	"fmt"
@@ -8,7 +8,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-//SetResponse struct for response
+// SetResponse struct for response
 type SetResponse struct {
 	Status     string      `json:"status"`
 	Data       interface{} `json:"data,omitempty"`
@@ -16,7 +16,7 @@ type SetResponse struct {
 	AccessTime string      `json:"accessTime"`
 }
 
-//ResponseSuccess for endpoint success
+// ResponseSuccess for endpoint success
 func ResponseSuccess(c *gin.Context, data interface{}) {
 	response := SetResponse{
 		Status:     http.StatusText(http.StatusOK),
@@ -28,7 +28,7 @@ func ResponseSuccess(c *gin.Context, data interface{}) {
 	c.JSON(http.StatusOK, response)
 }
 
-//ResponseError for endpoint error
+// ResponseError for endpoint error
 func ResponseError(c *gin.Context, err error, code int) {
 	response := SetResponse{
 		Status:     http.StatusText(code),
@@ -39,7 +39,7 @@ func ResponseError(c *gin.Context, err error, code int) {
 	c.JSON(code, response)
 }
 
-//ResponseError for endpoint error
+// ResponseError for endpoint error
 func ResponseAbort(c *gin.Context, err error, code int) {
 	response := SetResponse{
 		Status:     http.StatusText(code),
@@ -50,7 +50,7 @@ func ResponseAbort(c *gin.Context, err error, code int) {
 	c.AbortWithStatusJSON(code, response)
 }
 
-//ResponseImage endpoint image
+// ResponseImage endpoint image
 func ResponseFile(c *gin.Context, filename string, file []byte) {
 	c.Writer.WriteHeader(http.StatusOK)
 	c.Header("Content-Disposition", "attachment; filename="+filename)
@@ -63,7 +63,7 @@ func ResponseFile(c *gin.Context, filename string, file []byte) {
 	}
 }
 
-//ResponseHTML for HTML endpoint
+// ResponseHTML for HTML endpoint
 func ResponseHTML(c *gin.Context, html string) {
 	c.Data(http.StatusOK, "text/html; charset=utf-8", []byte(html))
 }

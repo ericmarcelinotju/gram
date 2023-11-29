@@ -4,7 +4,8 @@ import (
 	"net/http"
 
 	"github.com/ericmarcelinotju/gram/dto"
-	httpUtil "github.com/ericmarcelinotju/gram/utils/http"
+	"github.com/ericmarcelinotju/gram/utils/request"
+	"github.com/ericmarcelinotju/gram/utils/response"
 	"github.com/gin-gonic/gin"
 )
 
@@ -14,14 +15,14 @@ import (
 // @Tags        Setting
 // @Accept      json
 // @Produce     json
-// @Success     200    {object}   httpUtil.SetResponse{data=dto.ListSettingResponse}
+// @Success     200    {object}   response.SetResponse{data=dto.ListSettingDto}
 // @Router      /setting  [get]
 // @Security    Auth
 func Get(service Service) func(c *gin.Context) {
 	return func(c *gin.Context) {
 		settings, err := service.Read(c)
 		if err != nil {
-			httpUtil.ResponseError(c, err, http.StatusInternalServerError)
+			response.ResponseError(c, err, http.StatusInternalServerError)
 			return
 		}
 
@@ -29,7 +30,7 @@ func Get(service Service) func(c *gin.Context) {
 			Settings: settings,
 		}
 
-		httpUtil.ResponseSuccess(c, result)
+		response.ResponseSuccess(c, result)
 	}
 }
 
@@ -39,23 +40,23 @@ func Get(service Service) func(c *gin.Context) {
 // @Tags        Setting
 // @Accept      json
 // @Produce     json
-// @Param       setting   body       SettingPayload   true   "Setting Data"
-// @Success     200       {object}   httpUtil.SetResponse{data=dto.SettingResponse}
+// @Param       setting   body       dto.PostSettingDto   true   "Setting Data"
+// @Success     200       {object}   response.SetResponse
 // @Router      /setting  [post]
 // @Security    Auth
 func Save(service Service) func(c *gin.Context) {
 	return func(c *gin.Context) {
-		payload, err := httpUtil.Bind[dto.PostSettingDto](c)
+		payload, err := request.Bind[dto.PostSettingDto](c)
 		if err != nil {
-			httpUtil.ResponseError(c, err, http.StatusUnprocessableEntity)
+			response.ResponseError(c, err, http.StatusUnprocessableEntity)
 			return
 		}
 		err = service.Save(c, payload)
 		if err != nil {
-			httpUtil.ResponseError(c, err, http.StatusInternalServerError)
+			response.ResponseError(c, err, http.StatusInternalServerError)
 			return
 		}
 
-		httpUtil.ResponseSuccess(c, nil)
+		response.ResponseSuccess(c, nil)
 	}
 }

@@ -4,7 +4,8 @@ import (
 	"net/http"
 
 	"github.com/ericmarcelinotju/gram/dto"
-	httpUtil "github.com/ericmarcelinotju/gram/utils/http"
+	"github.com/ericmarcelinotju/gram/utils/request"
+	"github.com/ericmarcelinotju/gram/utils/response"
 	"github.com/gin-gonic/gin"
 )
 
@@ -14,20 +15,20 @@ import (
 // @Tags        Role
 // @Accept      json
 // @Produce     json
-// @Param       item   query      RoleFilter   true   "Paging, Search & Filter"
-// @Success     200    {object}   httpUtil.SetResponse{data=dto.ListRoleResponse}
+// @Param       item   query      dto.GetRoleDto   true   "Paging, Search & Filter"
+// @Success     200    {object}   response.SetResponse{data=dto.ListRoleDto}
 // @Router      /role  [get]
 // @Security    Auth
 func Get(service Service) func(c *gin.Context) {
 	return func(c *gin.Context) {
-		payload, err := httpUtil.Bind[dto.GetRoleDto](c)
+		payload, err := request.Bind[dto.GetRoleDto](c)
 		if err != nil {
-			httpUtil.ResponseError(c, err, http.StatusUnprocessableEntity)
+			response.ResponseError(c, err, http.StatusUnprocessableEntity)
 			return
 		}
 		roles, total, err := service.Read(c, payload)
 		if err != nil {
-			httpUtil.ResponseError(c, err, http.StatusInternalServerError)
+			response.ResponseError(c, err, http.StatusInternalServerError)
 			return
 		}
 
@@ -36,7 +37,7 @@ func Get(service Service) func(c *gin.Context) {
 			Total: total,
 		}
 
-		httpUtil.ResponseSuccess(c, result)
+		response.ResponseSuccess(c, result)
 	}
 }
 
@@ -47,23 +48,23 @@ func Get(service Service) func(c *gin.Context) {
 // @Accept      json
 // @Produce     json
 // @Param       id          path       string   true   "Role ID"
-// @Success     200         {object}   httpUtil.SetResponse{data=dto.RoleResponse}
+// @Success     200         {object}   response.SetResponse{data=dto.RoleDto}
 // @Router      /role/{id}  [get]
 // @Security    Auth
 func GetDetail(service Service) func(c *gin.Context) {
 	return func(c *gin.Context) {
-		id, err := httpUtil.BindId(c)
+		id, err := request.BindId(c)
 		if err != nil {
-			httpUtil.ResponseError(c, err, http.StatusUnprocessableEntity)
+			response.ResponseError(c, err, http.StatusUnprocessableEntity)
 			return
 		}
 		result, err := service.ReadById(c, id)
 		if err != nil {
-			httpUtil.ResponseError(c, err, http.StatusInternalServerError)
+			response.ResponseError(c, err, http.StatusInternalServerError)
 			return
 		}
 
-		httpUtil.ResponseSuccess(c, result)
+		response.ResponseSuccess(c, result)
 	}
 }
 
@@ -73,24 +74,24 @@ func GetDetail(service Service) func(c *gin.Context) {
 // @Tags        Role
 // @Accept      json
 // @Produce     json
-// @Param       role   body       PostRolePayload   true   "Role Data"
-// @Success     200    {object}   httpUtil.SetResponse{data=dto.RoleResponse}
+// @Param       role   body       dto.PostRoleDto   true   "Role Data"
+// @Success     200    {object}   response.SetResponse{data=dto.RoleDto}
 // @Router      /role  [post]
 // @Security    Auth
 func Post(service Service) func(c *gin.Context) {
 	return func(c *gin.Context) {
-		payload, err := httpUtil.Bind[dto.PostRoleDto](c)
+		payload, err := request.Bind[dto.PostRoleDto](c)
 		if err != nil {
-			httpUtil.ResponseError(c, err, http.StatusUnprocessableEntity)
+			response.ResponseError(c, err, http.StatusUnprocessableEntity)
 			return
 		}
 		res, err := service.Create(c, payload)
 		if err != nil {
-			httpUtil.ResponseError(c, err, http.StatusInternalServerError)
+			response.ResponseError(c, err, http.StatusInternalServerError)
 			return
 		}
 
-		httpUtil.ResponseSuccess(c, res)
+		response.ResponseSuccess(c, res)
 	}
 }
 
@@ -101,24 +102,24 @@ func Post(service Service) func(c *gin.Context) {
 // @Accept      json
 // @Produce     json
 // @Param       id     path       string           true   "Role ID"
-// @Param       role   body       PutRolePayload   true   "Role Data"
-// @Success     200    {object}   httpUtil.SetResponse{data=dto.RoleResponse}
+// @Param       role   body       dto.PutRoleDto   true   "Role Data"
+// @Success     200    {object}   response.SetResponse{data=dto.RoleDto}
 // @Router      /role/{id} [put]
 // @Security    Auth
 func Put(service Service) func(c *gin.Context) {
 	return func(c *gin.Context) {
-		payload, err := httpUtil.Bind[dto.PutRoleDto](c)
+		payload, err := request.Bind[dto.PutRoleDto](c)
 		if err != nil {
-			httpUtil.ResponseError(c, err, http.StatusUnprocessableEntity)
+			response.ResponseError(c, err, http.StatusUnprocessableEntity)
 			return
 		}
 		res, err := service.Update(c, payload)
 		if err != nil {
-			httpUtil.ResponseError(c, err, http.StatusInternalServerError)
+			response.ResponseError(c, err, http.StatusInternalServerError)
 			return
 		}
 
-		httpUtil.ResponseSuccess(c, res)
+		response.ResponseSuccess(c, res)
 	}
 }
 
@@ -129,23 +130,23 @@ func Put(service Service) func(c *gin.Context) {
 // @Accept      json
 // @Produce     json
 // @Param       id    path       string   true   "Role ID"
-// @Success     200   {object}   httpUtil.SetResponse
+// @Success     200   {object}   response.SetResponse
 // @Router      /role/{id} [delete]
 // @Security    Auth
 func Delete(service Service) func(c *gin.Context) {
 	return func(c *gin.Context) {
-		id, err := httpUtil.BindId(c)
+		id, err := request.BindId(c)
 		if err != nil {
-			httpUtil.ResponseError(c, err, http.StatusUnprocessableEntity)
+			response.ResponseError(c, err, http.StatusUnprocessableEntity)
 			return
 		}
 
 		err = service.DeleteById(c, id)
 		if err != nil {
-			httpUtil.ResponseError(c, err, http.StatusInternalServerError)
+			response.ResponseError(c, err, http.StatusInternalServerError)
 			return
 		}
 
-		httpUtil.ResponseSuccess(c, nil)
+		response.ResponseSuccess(c, nil)
 	}
 }

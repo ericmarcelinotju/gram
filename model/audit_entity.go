@@ -18,9 +18,9 @@ type AuditEntity struct {
 	OperationType string
 	Origin        string
 	UserId        uuid.UUID
-	User          UserEntity `gorm:"foreignKey:UserID"`
+	User          UserEntity `gorm:"foreignKey:UserId"`
 	PermissionId  uuid.UUID
-	Permission    PermissionEntity `gorm:"foreignKey:PermissionID"`
+	Permission    PermissionEntity `gorm:"foreignKey:PermissionId"`
 }
 
 func (AuditEntity) TableName() string {

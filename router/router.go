@@ -18,11 +18,10 @@ import (
 	userModule "github.com/ericmarcelinotju/gram/module/user"
 	"github.com/ericmarcelinotju/gram/plugins/job"
 
+	"github.com/ericmarcelinotju/gram/router/middleware"
 	swaggerRoutes "github.com/ericmarcelinotju/gram/router/swagger"
 
-	"github.com/ericmarcelinotju/gram/router/middleware"
-
-	response "github.com/ericmarcelinotju/gram/utils/http"
+	"github.com/ericmarcelinotju/gram/utils/response"
 )
 
 // NewHTTPHandler returns the HTTP requests handler

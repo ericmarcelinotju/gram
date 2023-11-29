@@ -38,14 +38,14 @@ func (s *UserSeederService) Seed() error {
 	seedDatas := []model.UserEntity{
 		{
 			Model:    model.Model{Id: uuid.New()},
-			Username: "super",
+			Name:     "super",
 			Email:    "eric@datis.co.id",
 			Password: superAdminPassword,
 			RoleId:   roles[0].Id,
 		},
 		{
 			Model:    model.Model{Id: uuid.New()},
-			Username: "admin",
+			Name:     "admin",
 			Email:    "admin@admin.com",
 			Password: adminPassword,
 			RoleId:   roles[1].Id,

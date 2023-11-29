@@ -53,7 +53,7 @@ func TestLoginHandler(t *testing.T) {
 
 	assert.NotEqual(t, err, nil)
 	assert.NotEqual(t, len(token), 0)
-	assert.Equal(t, user.Username, username)
+	assert.Equal(t, user.Name, username)
 }
 
 func TestLogoutHandler(t *testing.T) {
@@ -69,7 +69,7 @@ func TestLogoutHandler(t *testing.T) {
 
 	assert.NotEqual(t, err, nil)
 	assert.NotEqual(t, len(token), 0)
-	assert.Equal(t, user.Username, username)
+	assert.Equal(t, user.Name, username)
 
 	err = svc.Logout(ctx, token)
 

@@ -9,7 +9,8 @@ import (
 
 	"github.com/ericmarcelinotju/gram/dto"
 	authModule "github.com/ericmarcelinotju/gram/module/auth"
-	response "github.com/ericmarcelinotju/gram/utils/http"
+	"github.com/ericmarcelinotju/gram/utils/request"
+	"github.com/ericmarcelinotju/gram/utils/response"
 )
 
 type AuthMiddleware struct {
@@ -40,7 +41,7 @@ func NewAuthMiddleware(authSvc authModule.Service) AuthMiddleware {
 	authMiddleware := AuthMiddleware{
 		// Authenticate middleware
 		Authenticate: func(c *gin.Context) {
-			token, err := response.GetAuthToken(c)
+			token, err := request.GetAuthToken(c)
 			if err != nil {
 				response.ResponseAbort(c, err, http.StatusUnauthorized)
 				return

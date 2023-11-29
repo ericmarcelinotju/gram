@@ -1,11 +1,11 @@
-package http
+package request
 
 import (
 	"github.com/ericmarcelinotju/gram/dto"
 	"github.com/gin-gonic/gin"
 )
 
-func Bind[K interface{}](c *gin.Context) (*K, error) {
+func Bind[K any](c *gin.Context) (*K, error) {
 	var payload K
 	if err := c.ShouldBind(&payload); err != nil {
 		return nil, err

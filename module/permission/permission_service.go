@@ -35,12 +35,17 @@ func (svc *service) Create(ctx context.Context, payload *dto.PostPermissionDto) 
 }
 
 func (svc *service) Read(ctx context.Context, payload *dto.GetPermissionDto) ([]dto.PermissionDto, int64, error) {
+	filter := &dto.PermissionDto{}
+
+	if payload.Method != nil {
+		filter.Method = *payload.Method
+	}
+	if payload.Module != nil {
+		filter.Module = *payload.Module
+	}
 	return svc.repo.Select(
 		ctx,
-		&dto.PermissionDto{
-			Method: *payload.Method,
-			Module: *payload.Module,
-		},
+		filter,
 		payload.PaginationDto,
 		payload.SortDto,
 	)

@@ -39,7 +39,7 @@ func (e EmailNotifier) Notify(title string, content interface{}, recipient *dto.
 
 	m := gomail.NewMessage()
 	m.SetHeader("From", from)
-	m.SetAddressHeader("To", recipient.Email, recipient.Username)
+	m.SetAddressHeader("To", recipient.Email, recipient.Name)
 	m.SetHeader("Subject", title)
 
 	emailContent, ok := content.(EmailContent)

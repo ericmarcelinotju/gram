@@ -6,7 +6,8 @@ import (
 
 	"github.com/ericmarcelinotju/gram/dto"
 	"github.com/ericmarcelinotju/gram/module/user"
-	httpUtil "github.com/ericmarcelinotju/gram/utils/http"
+	"github.com/ericmarcelinotju/gram/utils/request"
+	"github.com/ericmarcelinotju/gram/utils/response"
 	"github.com/gin-gonic/gin"
 )
 
@@ -16,23 +17,23 @@ import (
 // @Tags        Auth
 // @Accept      json
 // @Produce     json
-// @Param       credential   body      LoginValidator   true   "Login Credential"
-// @Success     200          {object}  response.SetResponse{data=dto.LoginResponse}
+// @Param       credential   body      dto.LoginDto   true   "Login Credential"
+// @Success     200          {object}  response.SetResponse
 // @Router      /auth/login  [post]
 func Login(service Service) func(c *gin.Context) {
 	return func(c *gin.Context) {
-		payload, err := httpUtil.Bind[dto.LoginDto](c)
+		payload, err := request.Bind[dto.LoginDto](c)
 		if err != nil {
-			httpUtil.ResponseError(c, err, http.StatusInternalServerError)
+			response.ResponseError(c, err, http.StatusInternalServerError)
 			return
 		}
 		user, token, err := service.Login(c, payload)
 		if err != nil {
-			httpUtil.ResponseError(c, err, http.StatusInternalServerError)
+			response.ResponseError(c, err, http.StatusInternalServerError)
 			return
 		}
 
-		httpUtil.ResponseSuccess(c, gin.H{
+		response.ResponseSuccess(c, gin.H{
 			"token": token,
 			"user":  user,
 		})
@@ -45,23 +46,23 @@ func Login(service Service) func(c *gin.Context) {
 // @Tags        Auth
 // @Accept      json
 // @Produce     json
-// @Success     200    {object}   response.SetResponse{data=string}
+// @Success     200    {object}   response.SetResponse
 // @Router      /auth/logout  [post]
 // @Security    Auth
 func Logout(service Service) func(c *gin.Context) {
 	return func(c *gin.Context) {
-		token, err := httpUtil.GetAuthToken(c)
+		token, err := request.GetAuthToken(c)
 		if err != nil {
-			httpUtil.ResponseAbort(c, err, http.StatusUnauthorized)
+			response.ResponseAbort(c, err, http.StatusUnauthorized)
 			return
 		}
 		err = service.Logout(c, token)
 		if err != nil {
-			httpUtil.ResponseError(c, err, http.StatusInternalServerError)
+			response.ResponseError(c, err, http.StatusInternalServerError)
 			return
 		}
 
-		httpUtil.ResponseSuccess(c, nil)
+		response.ResponseSuccess(c, nil)
 	}
 }
 
@@ -71,28 +72,28 @@ func Logout(service Service) func(c *gin.Context) {
 // @Tags        Auth
 // @Accept      json
 // @Produce     json
-// @Param       credential   body      ForgotPasswordValidator   true   "Login Credential"
+// @Param       credential   body      dto.ChangeUserPasswordDto   true   "Login Credential"
 // @Success     200          {object}  response.SetResponse
-// @Router      /auth/forgot-password  [post]
+// @Router      /auth/change-password  [post]
 func ChangePassword(userSvc user.Service) func(c *gin.Context) {
 	return func(c *gin.Context) {
-		payload, err := httpUtil.Bind[dto.ChangeUserPasswordDto](c)
+		payload, err := request.Bind[dto.ChangeUserPasswordDto](c)
 		if err != nil {
-			httpUtil.ResponseError(c, err, http.StatusUnprocessableEntity)
+			response.ResponseError(c, err, http.StatusUnprocessableEntity)
 			return
 		}
 
 		if err = userSvc.UpdatePassword(c, payload); err != nil {
 			// TODO : process custom error
 			if strings.Contains(err.Error(), "NotFound") {
-				httpUtil.ResponseError(c, err, http.StatusNotFound)
+				response.ResponseError(c, err, http.StatusNotFound)
 				return
 			}
-			httpUtil.ResponseError(c, err, http.StatusInternalServerError)
+			response.ResponseError(c, err, http.StatusInternalServerError)
 			return
 		}
 
-		httpUtil.ResponseSuccess(c, nil)
+		response.ResponseSuccess(c, nil)
 	}
 }
 
@@ -102,28 +103,28 @@ func ChangePassword(userSvc user.Service) func(c *gin.Context) {
 // @Tags        Auth
 // @Accept      json
 // @Produce     json
-// @Param       credential   body      ForgotPasswordValidator   true   "Login Credential"
+// @Param       credential   body      dto.ForgotUserPasswordDto   true   "Login Credential"
 // @Success     200          {object}  response.SetResponse
 // @Router      /auth/forgot-password  [post]
 func ForgotPassword(service Service) func(c *gin.Context) {
 	return func(c *gin.Context) {
-		payload, err := httpUtil.Bind[dto.ForgotUserPasswordDto](c)
+		payload, err := request.Bind[dto.ForgotUserPasswordDto](c)
 		if err != nil {
-			httpUtil.ResponseError(c, err, http.StatusUnprocessableEntity)
+			response.ResponseError(c, err, http.StatusUnprocessableEntity)
 			return
 		}
 
 		if err = service.ForgotPassword(c, payload); err != nil {
 			// TODO : process custom error
 			if strings.Contains(err.Error(), "NotFound") {
-				httpUtil.ResponseError(c, err, http.StatusNotFound)
+				response.ResponseError(c, err, http.StatusNotFound)
 				return
 			}
-			httpUtil.ResponseError(c, err, http.StatusInternalServerError)
+			response.ResponseError(c, err, http.StatusInternalServerError)
 			return
 		}
 
-		httpUtil.ResponseSuccess(c, nil)
+		response.ResponseSuccess(c, nil)
 	}
 }
 
@@ -133,22 +134,22 @@ func ForgotPassword(service Service) func(c *gin.Context) {
 // @Tags        Auth
 // @Accept      json
 // @Produce     json
-// @Param       credential   body      ForgotPasswordValidator   true   "Login Credential"
+// @Param       credential   body      dto.ResetUserPasswordDto   true   "Login Credential"
 // @Success     200          {object}  response.SetResponse
-// @Router      /auth/forgot-password  [post]
+// @Router      /auth/reset-password  [post]
 func ResetPassword(service Service) func(c *gin.Context) {
 	return func(c *gin.Context) {
-		payload, err := httpUtil.Bind[dto.ResetUserPasswordDto](c)
+		payload, err := request.Bind[dto.ResetUserPasswordDto](c)
 		if err != nil {
-			httpUtil.ResponseError(c, err, http.StatusUnprocessableEntity)
+			response.ResponseError(c, err, http.StatusUnprocessableEntity)
 			return
 		}
 
 		if err = service.ResetPassword(c, payload); err != nil {
-			httpUtil.ResponseError(c, err, http.StatusInternalServerError)
+			response.ResponseError(c, err, http.StatusInternalServerError)
 			return
 		}
 
-		httpUtil.ResponseSuccess(c, nil)
+		response.ResponseSuccess(c, nil)
 	}
 }

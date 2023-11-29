@@ -62,7 +62,7 @@ func UserCommandFactory(permRepo permissionModule.Repository, roleRepo roleModul
 		superAdminRoleID := role.Id
 
 		err = userRepo.Insert(ctx, &dto.UserDto{
-			Username: username,
+			Name:     username,
 			Email:    email,
 			Password: password,
 			RoleId:   superAdminRoleID,

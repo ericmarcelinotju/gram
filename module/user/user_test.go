@@ -76,14 +76,14 @@ func TestReadByUsernameUserHandler(t *testing.T) {
 	res, err := svc.ReadByUsername(ctx, username)
 
 	assert.NotEqual(t, err, nil)
-	assert.Equal(t, res.Username, username)
+	assert.Equal(t, res.Name, username)
 }
 
 func TestCreateUserHandler(t *testing.T) {
 	ctx, svc := setupService()
 
 	payload := dto.PostUserDto{
-		Username: "testing",
+		Name:     "testing",
 		Email:    "testing@gmail.com",
 		Password: "password",
 	}
@@ -102,16 +102,16 @@ func TestUpdateUserHandler(t *testing.T) {
 	ctx, svc := setupService()
 
 	payload := dto.PutUserDto{
-		Id:       "asdasdasd",
-		Username: "testing-updated",
-		Email:    "testing@gmail.com",
+		Id:    "asdasdasd",
+		Name:  "testing-updated",
+		Email: "testing@gmail.com",
 	}
 
 	res, err := svc.Update(ctx, &payload)
 
 	assert.NotEqual(t, err, nil)
 	assert.Equal(t, res.Id, payload.Id)
-	assert.Equal(t, res.Username, payload.Username)
+	assert.Equal(t, res.Name, payload.Name)
 }
 
 func TestDeleteUserHandler(t *testing.T) {

@@ -39,11 +39,14 @@ func (svc *service) Create(ctx context.Context, payload *dto.PostRoleDto) (res *
 }
 
 func (svc *service) Read(ctx context.Context, payload *dto.GetRoleDto) ([]dto.RoleDto, int64, error) {
+	filter := &dto.RoleDto{}
+
+	if payload.Name != nil {
+		filter.Name = *payload.Name
+	}
 	return svc.repo.Select(
 		ctx,
-		&dto.RoleDto{
-			Name: *payload.Name,
-		},
+		filter,
 		payload.PaginationDto,
 		payload.SortDto,
 	)
