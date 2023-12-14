@@ -60,13 +60,13 @@ func (s *repository) Login(ctx context.Context, username string, password string
 	query := s.db.
 		Preload("Role").
 		Preload("Role.Permissions").
-		First(&result, "username = ?", username)
+		First(&result, "name = ?", username)
 	if err = query.Error; err != nil {
 		err = customErrors.NewAppError(pkgErr.Wrap(err, loginError), customErrors.NotAuthorized)
 		return nil, "", err
 	}
 	if !crypt.CompareHash(result.Password, password) {
-		err = customErrors.NewAppError(pkgErr.Wrap(err, loginError), customErrors.NotAuthorized)
+		err = customErrors.NewAppError(errors.New(loginError), customErrors.NotAuthorized)
 		return nil, "", err
 	}
 

@@ -9,17 +9,12 @@ import (
 )
 
 type Model struct {
-	Id        uuid.UUID `gorm:"type:string"`
+	Id        uuid.UUID `gorm:"type:uuid;default:uuid_generate_v4()"`
 	CreatedAt time.Time
 	UpdatedAt time.Time
 }
 
 func (m *Model) BeforeCreate(tx *gorm.DB) error {
-	if m.Id == uuid.Nil {
-		uuid := uuid.New().String()
-		tx.Statement.SetColumn("ID", uuid)
-	}
-
 	ctx := tx.Statement.Context
 
 	userCtx := ctx.Value("auth-user")

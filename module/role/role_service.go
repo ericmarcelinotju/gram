@@ -62,6 +62,7 @@ func (svc *service) Update(ctx context.Context, payload *dto.PutRoleDto) (res *d
 		permissions[i] = dto.PermissionDto{Id: item.Id}
 	}
 	res = &dto.RoleDto{
+		Id:          payload.Id,
 		Name:        payload.Name,
 		Description: payload.Description,
 		Permissions: permissions,

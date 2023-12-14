@@ -5,12 +5,6 @@ import (
 	"time"
 )
 
-// ListUserDto struct defines http response of users
-type ListUserDto struct {
-	Users []UserDto `json:"users"`
-	Total int64     `json:"total"`
-}
-
 // UserDto struct defines dto of user entity
 type UserDto struct {
 	Id        string `json:"id"`
@@ -44,7 +38,7 @@ type PostUserDto struct {
 }
 
 type PutUserDto struct {
-	Id        string                `json:"id" form:"id" uri:"id" binding:"required,uuid"`
+	Id        string                `json:"-"`
 	Name      string                `json:"name" form:"name" binding:"min=2"`
 	Firstname string                `json:"first_name" form:"first_name"`
 	Lastname  string                `json:"last_name" form:"last_name"`

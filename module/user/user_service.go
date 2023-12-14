@@ -109,6 +109,7 @@ func (svc *service) Update(ctx context.Context, payload *dto.PutUserDto) (res *d
 	}
 
 	res = &dto.UserDto{
+		Id:       payload.Id,
 		Name:     payload.Name,
 		Lastname: payload.Lastname,
 		Title:    payload.Title,
@@ -116,7 +117,7 @@ func (svc *service) Update(ctx context.Context, payload *dto.PutUserDto) (res *d
 		Avatar:   avatar,
 		RoleId:   payload.RoleId,
 	}
-	err = svc.repo.Insert(ctx, res)
+	err = svc.repo.Update(ctx, res)
 	return
 }
 

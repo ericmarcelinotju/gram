@@ -2,12 +2,6 @@ package dto
 
 import "time"
 
-// ListAuditDto struct defines http response of audits
-type ListAuditDto struct {
-	Audits []AuditDto `json:"audits"`
-	Total  int64      `json:"total"`
-}
-
 // AuditDto struct defines dto for audit entity
 type AuditDto struct {
 	ID            string    `json:"id"`

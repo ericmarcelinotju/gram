@@ -13,7 +13,12 @@ type RoleEntity struct {
 	Model
 	Name        string `gorm:"unique"`
 	Description string
+	Level       int
 	Permissions []PermissionEntity `gorm:"many2many:role_permissions;"`
+}
+
+func (RoleEntity) TableName() string {
+	return "roles"
 }
 
 // RolePermissions struct defines the database model for a role permission.
@@ -25,6 +30,10 @@ type RolePermissionEntity struct {
 	CreatedAt    time.Time
 	UpdatedAt    time.Time
 	DeletedAt    gorm.DeletedAt
+}
+
+func (RolePermissionEntity) TableName() string {
+	return "role_permission"
 }
 
 func NewRoleEntity(entity *dto.RoleDto) *RoleEntity {
@@ -43,6 +52,7 @@ func NewRoleEntity(entity *dto.RoleDto) *RoleEntity {
 		},
 		Name:        entity.Name,
 		Description: entity.Description,
+		Level:       entity.Level,
 		Permissions: permissions,
 	}
 }
@@ -57,6 +67,7 @@ func (entity *RoleEntity) ToDto() *dto.RoleDto {
 		Id:          entity.Id.String(),
 		Name:        entity.Name,
 		Description: entity.Description,
+		Level:       entity.Level,
 		Permissions: permissions,
 		CreatedAt:   entity.CreatedAt,
 		UpdatedAt:   entity.UpdatedAt,

@@ -4,12 +4,6 @@ import (
 	"time"
 )
 
-// ListPermissionDto struct defines http response of permissions
-type ListPermissionDto struct {
-	Permissions []PermissionDto `json:"permissions"`
-	Total       int64           `json:"total"`
-}
-
 // PermissionDto struct defines dto for permission entity
 type PermissionDto struct {
 	Id          string     `json:"id"`
@@ -28,7 +22,7 @@ type PostPermissionDto struct {
 }
 
 type PutPermissionDto struct {
-	Id          string `json:"id" form:"id" uri:"id" binding:"required,uuid"`
+	Id          string `json:"-"`
 	Method      string `json:"method"`
 	Module      string `json:"module"`
 	Description string `json:"description"`

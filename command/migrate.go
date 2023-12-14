@@ -13,6 +13,8 @@ func MigrateCommandFactory(services []SeederService) func(context.Context) error
 		var migrateErrors map[string]error = make(map[string]error)
 		var err error
 
+		// TODO :: CREATE EXTENSION "uuid-ossp";
+
 		for _, service := range services {
 			var serviceName string
 			if t := reflect.TypeOf(service); t.Kind() == reflect.Ptr {

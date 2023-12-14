@@ -13,6 +13,10 @@ type PermissionEntity struct {
 	Description string
 }
 
+func (PermissionEntity) PermissionEntity() string {
+	return "permissions"
+}
+
 func NewPermissionEntity(dto *dto.PermissionDto) *PermissionEntity {
 	id, _ := uuid.Parse(dto.Id)
 

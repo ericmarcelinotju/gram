@@ -32,9 +32,9 @@ func Get(service Service) func(c *gin.Context) {
 			return
 		}
 
-		result := dto.ListPermissionDto{
-			Permissions: permissions,
-			Total:       total,
+		result := dto.ListDto[dto.PermissionDto]{
+			Data:  permissions,
+			Total: total,
 		}
 
 		response.ResponseSuccess(c, result)
@@ -113,6 +113,13 @@ func Put(service Service) func(c *gin.Context) {
 			response.ResponseError(c, err, http.StatusUnprocessableEntity)
 			return
 		}
+		id, err := request.BindId(c)
+		if err != nil {
+			response.ResponseError(c, err, http.StatusUnprocessableEntity)
+			return
+		}
+		payload.Id = id
+
 		res, err := service.Update(c, payload)
 		if err != nil {
 			response.ResponseError(c, err, http.StatusInternalServerError)

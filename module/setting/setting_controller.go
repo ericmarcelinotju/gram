@@ -26,8 +26,8 @@ func Get(service Service) func(c *gin.Context) {
 			return
 		}
 
-		result := dto.ListSettingDto{
-			Settings: settings,
+		result := dto.ListDto[dto.SettingDto]{
+			Data: settings,
 		}
 
 		response.ResponseSuccess(c, result)

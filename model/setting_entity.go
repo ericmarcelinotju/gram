@@ -8,6 +8,10 @@ type SettingEntity struct {
 	Value string
 }
 
+func (SettingEntity) TableName() string {
+	return "settings"
+}
+
 func NewSettingEntity(entity *dto.SettingDto) *SettingEntity {
 	return &SettingEntity{
 		Name:  entity.Name,

@@ -25,6 +25,10 @@ type UserEntity struct {
 	ForgotPasswordToken *string
 }
 
+func (UserEntity) TableName() string {
+	return "users"
+}
+
 func NewUserEntity(entity *dto.UserDto) *UserEntity {
 	id, _ := uuid.Parse(entity.Id)
 	roleId, _ := uuid.Parse(entity.RoleId)

@@ -2,17 +2,12 @@ package dto
 
 import "time"
 
-// ListRoleDto struct defines http response of roles
-type ListRoleDto struct {
-	Roles []RoleDto `json:"roles"`
-	Total int64     `json:"total"`
-}
-
 // RoleDto struct defines dto for role entity
 type RoleDto struct {
 	Id          string          `json:"id"`
 	Name        string          `json:"name"`
 	Description string          `json:"description"`
+	Level       int             `json:"level"`
 	Permissions []PermissionDto `json:"permissions"`
 	CreatedAt   time.Time       `json:"created_at"`
 	UpdatedAt   time.Time       `json:"updated_at"`
@@ -22,13 +17,15 @@ type RoleDto struct {
 type PostRoleDto struct {
 	Name        string  `json:"name" binding:"required"`
 	Description string  `json:"description"`
+	Level       int     `json:"level"`
 	Permissions []IdDto `json:"permissions"`
 }
 
 type PutRoleDto struct {
-	Id          string  `json:"id" form:"id" uri:"id" binding:"required,uuid"`
+	Id          string  `json:"-"`
 	Name        string  `json:"name"`
 	Description string  `json:"description"`
+	Level       int     `json:"level"`
 	Permissions []IdDto `json:"permissions"`
 }
 

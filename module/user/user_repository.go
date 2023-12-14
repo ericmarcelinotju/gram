@@ -166,7 +166,7 @@ func (s *repository) SelectByUsername(ctx context.Context, id string) (*dto.User
 		WithContext(ctx).
 		Preload("Role").
 		Preload("Role.Permissions").
-		First(&result, "username = ?", id)
+		First(&result, "name = ?", id)
 
 	if errors.Is(query.Error, gorm.ErrRecordNotFound) {
 		appErr := customErrors.NewAppError(pkgErr.Wrap(query.Error, selectError), customErrors.NotFoundError)
