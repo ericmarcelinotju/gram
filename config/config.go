@@ -113,7 +113,17 @@ var Instance *Config
 // NewConfig creates a new Config struct
 func NewConfig(envFileName string) *Config {
 	envFile = envFileName
-	env.CheckDotEnv(envFileName)
+	config := Reload()
+	return config
+}
+
+func ChangeEnv(envFileName string) string {
+	envFile = envFileName
+	return envFile
+}
+
+func Reload() *Config {
+	env.CheckDotEnv(envFile)
 	environment := env.MustGet("ENV")
 	if environment == "prod" {
 		gin.SetMode(gin.ReleaseMode)

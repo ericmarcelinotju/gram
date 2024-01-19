@@ -2,7 +2,7 @@ package seeder
 
 import (
 	"github.com/ericmarcelinotju/gram/model"
-	"github.com/google/uuid"
+	uuid "github.com/satori/go.uuid"
 	"gorm.io/gorm"
 )
 
@@ -31,7 +31,7 @@ func (s *PermissionSeederService) Seed() error {
 	for module, methods := range permissionsMap {
 		for _, method := range methods {
 			entity := model.PermissionEntity{
-				Model:       model.Model{Id: uuid.New()},
+				Model:       model.Model{Id: uuid.NewV4()},
 				Module:      module,
 				Method:      method,
 				Description: "Seeded permissions",

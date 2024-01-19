@@ -2,6 +2,7 @@ package user
 
 import (
 	"context"
+	"log"
 	"testing"
 
 	"github.com/ericmarcelinotju/gram/config"
@@ -32,7 +33,13 @@ func setupService() (context.Context, Service) {
 func TestReadUserHandler(t *testing.T) {
 	ctx, svc := setupService()
 
-	res, total, err := svc.Read(ctx, nil)
+	res, total, err := svc.Read(ctx, &dto.GetUserDto{
+		Name:          nil,
+		Email:         nil,
+		RoleId:        nil,
+		PaginationDto: nil,
+		SortDto:       nil,
+	})
 
 	assert.NotEqual(t, err, nil)
 	assert.Equal(t, total, 0)
@@ -65,7 +72,7 @@ func TestReadByIdUserHandler(t *testing.T) {
 	res, err := svc.ReadById(ctx, id)
 
 	assert.NotEqual(t, err, nil)
-	assert.Equal(t, res.Id, id)
+	assert.Equal(t, res, nil)
 }
 
 func TestReadByUsernameUserHandler(t *testing.T) {
@@ -76,7 +83,7 @@ func TestReadByUsernameUserHandler(t *testing.T) {
 	res, err := svc.ReadByUsername(ctx, username)
 
 	assert.NotEqual(t, err, nil)
-	assert.Equal(t, res.Name, username)
+	assert.Equal(t, res, nil)
 }
 
 func TestCreateUserHandler(t *testing.T) {
@@ -90,12 +97,16 @@ func TestCreateUserHandler(t *testing.T) {
 
 	res, err := svc.Create(ctx, &payload)
 
-	assert.NotEqual(t, err, nil)
+	assert.Equal(t, err, nil)
 
 	check, err := svc.ReadById(ctx, res.Id)
 
-	assert.NotEqual(t, err, nil)
-	assert.Equal(t, res.Id, check.Id)
+	assert.Equal(t, err, nil)
+	if err == nil {
+		assert.Equal(t, res.Id, check.Id)
+	} else {
+		log.Println(err.Error())
+	}
 }
 
 func TestUpdateUserHandler(t *testing.T) {

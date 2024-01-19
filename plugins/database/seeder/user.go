@@ -3,7 +3,7 @@ package seeder
 import (
 	"github.com/ericmarcelinotju/gram/model"
 	"github.com/ericmarcelinotju/gram/utils/crypt"
-	"github.com/google/uuid"
+	uuid "github.com/satori/go.uuid"
 	"gorm.io/gorm"
 )
 
@@ -37,14 +37,14 @@ func (s *UserSeederService) Seed() error {
 
 	seedDatas := []model.UserEntity{
 		{
-			Model:    model.Model{Id: uuid.New()},
+			Model:    model.Model{Id: uuid.NewV4()},
 			Name:     "super",
 			Email:    "eric@datis.co.id",
 			Password: superAdminPassword,
 			RoleId:   roles[0].Id,
 		},
 		{
-			Model:    model.Model{Id: uuid.New()},
+			Model:    model.Model{Id: uuid.NewV4()},
 			Name:     "admin",
 			Email:    "admin@admin.com",
 			Password: adminPassword,

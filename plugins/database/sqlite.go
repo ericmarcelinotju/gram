@@ -2,13 +2,16 @@ package database
 
 import (
 	"crypto/md5"
+	"database/sql"
 	"encoding/hex"
-	"fmt"
 	"github.com/ericmarcelinotju/gram/config"
 	"github.com/ericmarcelinotju/gram/utils/env"
 	"github.com/glebarez/sqlite"
+	sqliteGo "github.com/mattn/go-sqlite3"
+	uuid "github.com/satori/go.uuid"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
+	"sync"
 )
 
 func MD5(val string) string {
@@ -19,13 +22,47 @@ func MD5(val string) string {
 	return hex.EncodeToString(hash[:])
 }
 
+var once sync.Once
+
 func ConnectSqlite(configuration *config.Database) (*gorm.DB, error) {
-	dsn := fmt.Sprintf(
-		"file:%s.db?_auth&_auth_user=%s&_auth_pass=%s&_auth_crypt=sha256",
-		env.GetRootPath(configuration.DB),
-		configuration.User,
-		configuration.Password,
-	)
+	const CustomDriverName = "sqlite3_extended"
+	var File = env.GetRootPath(configuration.DB)
+	//dsn := fmt.Sprintf(
+	//	"file:%s.db?_auth&_auth_user=%s&_auth_pass=%s&_auth_crypt=sha256",
+	//	File,
+	//	configuration.User,
+	//	configuration.Password,
+	//)
+	once.Do(func() {
+		sql.Register(CustomDriverName,
+			&sqliteGo.SQLiteDriver{
+				ConnectHook: func(conn *sqliteGo.SQLiteConn) error {
+					err := conn.RegisterFunc(
+						"uuid_generate_v4",
+						func(arguments ...interface{}) (string, error) {
+							return uuid.NewV4().String(), nil // Return a string value.
+						},
+						true,
+					)
+					return err
+				},
+			},
+		)
+	})
+
+	conn, err := sql.Open(CustomDriverName, File)
+	if err != nil {
+		panic(err)
+	}
+	return gorm.Open(sqlite.Dialector{
+		DriverName: CustomDriverName,
+		DSN:        File,
+		Conn:       conn,
+	}, &gorm.Config{
+		Logger: logger.Default.LogMode(logger.Silent),
+	})
+
+	//
 
 	// sql.Register("sqlite3_custom", &sqlite3.SQLiteDriver{
 	// 	ConnectHook: func(conn *sqlite3.SQLiteConn) error {
@@ -41,5 +78,5 @@ func ConnectSqlite(configuration *config.Database) (*gorm.DB, error) {
 	// 	log.Fatal("Failed to open database:", err)
 	// }
 
-	return gorm.Open(sqlite.Open(dsn), &gorm.Config{Logger: logger.Default.LogMode(logger.Silent)})
+	//return gorm.Open(sqlite.Open(dsn), &gorm.Config{Logger: logger.Default.LogMode(logger.Silent)})
 }

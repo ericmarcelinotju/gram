@@ -2,6 +2,7 @@ package permission
 
 import (
 	"context"
+	"log"
 	"testing"
 
 	"github.com/ericmarcelinotju/gram/config"
@@ -26,8 +27,12 @@ func setupService() (context.Context, Service) {
 func TestReadUserHandler(t *testing.T) {
 	ctx, svc := setupService()
 
-	res, total, err := svc.Read(ctx, nil)
-
+	res, total, err := svc.Read(ctx, &dto.GetPermissionDto{
+		Method:        nil,
+		Module:        nil,
+		PaginationDto: nil,
+		SortDto:       nil,
+	})
 	assert.NotEqual(t, err, nil)
 	assert.Equal(t, total, 0)
 	assert.Equal(t, len(res), total)
@@ -51,17 +56,6 @@ func TestReadWithPaginationUserHandler(t *testing.T) {
 	assert.Equal(t, len(res), totalPerPage)
 }
 
-func TestReadByIdUserHandler(t *testing.T) {
-	ctx, svc := setupService()
-
-	id := "asdasdasd"
-
-	res, err := svc.ReadById(ctx, id)
-
-	assert.NotEqual(t, err, nil)
-	assert.Equal(t, res.Id, id)
-}
-
 func TestCreateUserHandler(t *testing.T) {
 	ctx, svc := setupService()
 
@@ -77,15 +71,27 @@ func TestCreateUserHandler(t *testing.T) {
 
 	check, err := svc.ReadById(ctx, res.Id)
 
-	assert.NotEqual(t, err, nil)
+	if err != nil {
+		log.Println(err.Error())
+
+	}
+	assert.Equal(t, err, nil)
 	assert.Equal(t, res.Id, check.Id)
 }
 
 func TestUpdateUserHandler(t *testing.T) {
 	ctx, svc := setupService()
 
+	permissions, total, err := svc.Read(ctx, &dto.GetPermissionDto{
+		Method:        nil,
+		Module:        nil,
+		PaginationDto: nil,
+		SortDto:       nil,
+	})
+	assert.NotEqual(t, total, 0)
+
 	payload := dto.PutPermissionDto{
-		Id:          "asdasdasd",
+		Id:          permissions[0].Id,
 		Method:      "testing-updated",
 		Module:      "testing",
 		Description: "testing@gmail.com",
@@ -100,6 +106,17 @@ func TestUpdateUserHandler(t *testing.T) {
 	assert.NotEqual(t, err, nil)
 	assert.Equal(t, res.Id, check.Id)
 	assert.Equal(t, res.Method, check.Method)
+}
+
+func TestReadByIdUserHandler(t *testing.T) {
+	ctx, svc := setupService()
+
+	id := "asdasdasd"
+
+	res, err := svc.ReadById(ctx, id)
+
+	assert.NotEqual(t, err, nil)
+	assert.Equal(t, res, id)
 }
 
 func TestDeleteUserHandler(t *testing.T) {

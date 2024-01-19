@@ -3,6 +3,7 @@ package auth
 import (
 	"context"
 	"errors"
+	uuid "github.com/satori/go.uuid"
 	"net/http"
 	"os"
 	"time"
@@ -10,7 +11,6 @@ import (
 	"gorm.io/gorm"
 
 	"github.com/gin-gonic/gin"
-	"github.com/google/uuid"
 	pkgErr "github.com/pkg/errors"
 
 	"github.com/ericmarcelinotju/gram/dto"
@@ -70,7 +70,7 @@ func (s *repository) Login(ctx context.Context, username string, password string
 		return nil, "", err
 	}
 
-	token := uuid.New().String()
+	token := uuid.NewV4().String()
 	expiry := time.Hour * 24
 	if isRememberMe {
 		expiry = time.Hour * 730
@@ -134,7 +134,7 @@ func (s *repository) ReadUserByToken(ctx context.Context, token string) (user *d
 }
 
 func (s *repository) ForgotPassword(ctx context.Context, payload *dto.UserDto) error {
-	token := uuid.New().String()
+	token := uuid.NewV4().String()
 	err := s.cache.Set(ctx, token, payload, time.Minute*30)
 	if err != nil {
 		return customErrors.NewAppError(pkgErr.Wrap(err, forgotError), customErrors.CacheError)

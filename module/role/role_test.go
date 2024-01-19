@@ -26,7 +26,11 @@ func setupService() (context.Context, Service) {
 func TestReadUserHandler(t *testing.T) {
 	ctx, svc := setupService()
 
-	res, total, err := svc.Read(ctx, nil)
+	res, total, err := svc.Read(ctx, &dto.GetRoleDto{
+		Name:          nil,
+		PaginationDto: nil,
+		SortDto:       nil,
+	})
 
 	assert.NotEqual(t, err, nil)
 	assert.Equal(t, total, 0)
@@ -49,17 +53,6 @@ func TestReadWithPaginationUserHandler(t *testing.T) {
 	assert.NotEqual(t, err, nil)
 	assert.Equal(t, total, 0)
 	assert.Equal(t, len(res), totalPerPage)
-}
-
-func TestReadByIdUserHandler(t *testing.T) {
-	ctx, svc := setupService()
-
-	id := "asdasdasd"
-
-	res, err := svc.ReadById(ctx, id)
-
-	assert.NotEqual(t, err, nil)
-	assert.Equal(t, res.Id, id)
 }
 
 func TestCreateUserHandler(t *testing.T) {
@@ -90,6 +83,17 @@ func TestUpdateUserHandler(t *testing.T) {
 	assert.NotEqual(t, err, nil)
 	assert.Equal(t, res.Id, payload.Id)
 	assert.Equal(t, res.Name, payload.Name)
+}
+
+func TestReadByIdUserHandler(t *testing.T) {
+	ctx, svc := setupService()
+
+	id := "asdasdasd"
+
+	res, err := svc.ReadById(ctx, id)
+
+	assert.Equal(t, err, nil)
+	assert.Equal(t, res.Id, id)
 }
 
 func TestDeleteUserHandler(t *testing.T) {
