@@ -33,7 +33,7 @@ import (
 // @name Authorization
 func main() {
 	// get configuration stucts via .env file
-	configuration := config.NewConfig()
+	configuration := config.NewConfig(".env.test")
 
 	// establish DB connection
 	db, err := database.Connect(configuration.Database)

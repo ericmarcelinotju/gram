@@ -18,7 +18,7 @@ func setupService() (context.Context, Service) {
 	// TODO :: Use sqlite and populate data
 
 	// get configuration stucts via .env file
-	configuration := config.NewConfig()
+	configuration := config.NewConfig(".env.test")
 
 	// establish DB connection
 	db, _ := database.Connect(configuration.Database)

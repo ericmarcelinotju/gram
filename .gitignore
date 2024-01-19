@@ -5,6 +5,7 @@ backend
 doppler
 temp_files
 .DS_Store
+.env
 .idea
 .vscode
 Gopkg.lock

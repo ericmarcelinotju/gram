@@ -4,8 +4,8 @@ import (
 	"crypto/md5"
 	"encoding/hex"
 	"fmt"
-
 	"github.com/ericmarcelinotju/gram/config"
+	"github.com/ericmarcelinotju/gram/utils/env"
 	"github.com/glebarez/sqlite"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
@@ -22,7 +22,7 @@ func MD5(val string) string {
 func ConnectSqlite(configuration *config.Database) (*gorm.DB, error) {
 	dsn := fmt.Sprintf(
 		"file:%s.db?_auth&_auth_user=%s&_auth_pass=%s&_auth_crypt=sha256",
-		configuration.DB,
+		env.GetRootPath(configuration.DB),
 		configuration.User,
 		configuration.Password,
 	)

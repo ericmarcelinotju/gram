@@ -1,6 +1,7 @@
 package storage
 
 import (
+	"github.com/ericmarcelinotju/gram/utils/env"
 	"io"
 	"io/fs"
 	"mime/multipart"
@@ -16,11 +17,11 @@ type FileStorage struct {
 }
 
 func NewFileStorage(configuration *config.Storage) (*FileStorage, error) {
-	path := configuration.Path
+	path := env.GetRootPath(configuration.Path)
 	// Check path exist
 	_, err := os.Stat(path)
 	if os.IsNotExist(err) {
-		if err = os.MkdirAll(path, os.ModeDir); err != nil {
+		if err = os.MkdirAll(path, 0755); err != nil {
 			return nil, err
 		}
 	} else if err != nil {
