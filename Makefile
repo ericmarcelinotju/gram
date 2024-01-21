@@ -11,6 +11,10 @@ lint: ## Lint the files
 	@golint -set_exit_status ${PKG_LIST}
 
 test: ## Run unittests
+	@rm gram_db
+	@touch gram_db
+	@go run main.go -m -t
+	@go run main.go -s -t
 	@go test -short ${PKG_LIST}
 
 race: dep ## Run data race detector

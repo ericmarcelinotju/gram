@@ -32,10 +32,11 @@ func Get(key string) string {
 
 // CheckDotEnv loads environment variables from .env file for development environment
 func CheckDotEnv(envFileName string) {
-	err := godotenv.Load(GetRootPath(envFileName))
+	err := godotenv.Overload(GetRootPath(envFileName))
 	if err != nil && os.Getenv(env) == local {
 		log.Println("Error loading .env file")
 	}
+
 }
 
 // GetRootPath returns the absolute path of the given environment file (envFile) in the Go module's

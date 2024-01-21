@@ -43,15 +43,15 @@ func setupService() (context.Context, Service) {
 func TestLoginHandler(t *testing.T) {
 	ctx, svc := setupService()
 
-	username := ""
-	password := ""
+	username := "super"
+	password := "super"
 
 	user, token, err := svc.Login(ctx, &dto.LoginDto{
 		Username: username,
 		Password: password,
 	})
 
-	assert.NotEqual(t, err, nil)
+	assert.Equal(t, err, nil)
 	assert.NotEqual(t, len(token), 0)
 	assert.Equal(t, user.Name, username)
 }
@@ -59,19 +59,19 @@ func TestLoginHandler(t *testing.T) {
 func TestLogoutHandler(t *testing.T) {
 	ctx, svc := setupService()
 
-	username := ""
-	password := ""
+	username := "super"
+	password := "super"
 
 	user, token, err := svc.Login(ctx, &dto.LoginDto{
 		Username: username,
 		Password: password,
 	})
 
-	assert.NotEqual(t, err, nil)
+	assert.Equal(t, err, nil)
 	assert.NotEqual(t, len(token), 0)
 	assert.Equal(t, user.Name, username)
 
 	err = svc.Logout(ctx, token)
 
-	assert.NotEqual(t, err, nil)
+	assert.Equal(t, err, nil)
 }

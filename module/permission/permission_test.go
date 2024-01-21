@@ -2,7 +2,9 @@ package permission
 
 import (
 	"context"
-	"log"
+	"errors"
+	customErrors "github.com/ericmarcelinotju/gram/errors"
+	pkgErr "github.com/pkg/errors"
 	"testing"
 
 	"github.com/ericmarcelinotju/gram/config"
@@ -33,9 +35,8 @@ func TestReadUserHandler(t *testing.T) {
 		PaginationDto: nil,
 		SortDto:       nil,
 	})
-	assert.NotEqual(t, err, nil)
-	assert.Equal(t, total, 0)
-	assert.Equal(t, len(res), total)
+	assert.Equal(t, err, nil)
+	assert.Equal(t, len(res), int(total))
 }
 
 func TestReadWithPaginationUserHandler(t *testing.T) {
@@ -51,9 +52,10 @@ func TestReadWithPaginationUserHandler(t *testing.T) {
 		},
 	})
 
-	assert.NotEqual(t, err, nil)
-	assert.Equal(t, total, 0)
-	assert.Equal(t, len(res), totalPerPage)
+	assert.Equal(t, err, nil)
+	if int(total) > totalPerPage {
+		assert.Equal(t, len(res), totalPerPage)
+	}
 }
 
 func TestCreateUserHandler(t *testing.T) {
@@ -67,19 +69,44 @@ func TestCreateUserHandler(t *testing.T) {
 
 	res, err := svc.Create(ctx, &payload)
 
-	assert.NotEqual(t, err, nil)
+	assert.Equal(t, err, nil)
 
 	check, err := svc.ReadById(ctx, res.Id)
 
-	if err != nil {
-		log.Println(err.Error())
-
-	}
 	assert.Equal(t, err, nil)
 	assert.Equal(t, res.Id, check.Id)
 }
 
 func TestUpdateUserHandler(t *testing.T) {
+	ctx, svc := setupService()
+	findQuery := "testing"
+	permissions, total, err := svc.Read(ctx, &dto.GetPermissionDto{
+		Method:        &findQuery,
+		Module:        &findQuery,
+		PaginationDto: nil,
+		SortDto:       nil,
+	})
+	assert.NotEqual(t, total, 0)
+
+	payload := dto.PutPermissionDto{
+		Id:          permissions[0].Id,
+		Method:      "testing-updated",
+		Module:      "testing-updated",
+		Description: "testing@gmail.com",
+	}
+
+	res, err := svc.Update(ctx, &payload)
+
+	assert.Equal(t, err, nil)
+
+	check, err := svc.ReadById(ctx, res.Id)
+
+	assert.Equal(t, err, nil)
+	assert.Equal(t, res.Id, check.Id)
+	assert.Equal(t, res.Method, check.Method)
+}
+
+func TestReadByIdUserHandler(t *testing.T) {
 	ctx, svc := setupService()
 
 	permissions, total, err := svc.Read(ctx, &dto.GetPermissionDto{
@@ -89,46 +116,32 @@ func TestUpdateUserHandler(t *testing.T) {
 		SortDto:       nil,
 	})
 	assert.NotEqual(t, total, 0)
+	res, err := svc.ReadById(ctx, permissions[0].Id)
 
-	payload := dto.PutPermissionDto{
-		Id:          permissions[0].Id,
-		Method:      "testing-updated",
-		Module:      "testing",
-		Description: "testing@gmail.com",
-	}
-
-	res, err := svc.Update(ctx, &payload)
-
-	assert.NotEqual(t, err, nil)
-
-	check, err := svc.ReadById(ctx, res.Id)
-
-	assert.NotEqual(t, err, nil)
-	assert.Equal(t, res.Id, check.Id)
-	assert.Equal(t, res.Method, check.Method)
-}
-
-func TestReadByIdUserHandler(t *testing.T) {
-	ctx, svc := setupService()
-
-	id := "asdasdasd"
-
-	res, err := svc.ReadById(ctx, id)
-
-	assert.NotEqual(t, err, nil)
-	assert.Equal(t, res, id)
+	assert.Equal(t, err, nil)
+	assert.NotEqual(t, res, nil)
+	assert.Equal(t, res.Id, permissions[0].Id)
 }
 
 func TestDeleteUserHandler(t *testing.T) {
 	ctx, svc := setupService()
 
-	id := "aasdasdasd"
+	findQuery := "testing-updated"
+	permissions, total, err := svc.Read(ctx, &dto.GetPermissionDto{
+		Method:        &findQuery,
+		Module:        &findQuery,
+		PaginationDto: nil,
+		SortDto:       nil,
+	})
+	assert.NotEqual(t, total, 0)
+	res, err := svc.ReadById(ctx, permissions[0].Id)
 
-	err := svc.DeleteById(ctx, id)
-
-	assert.NotEqual(t, err, nil)
-
-	_, err = svc.ReadById(ctx, id)
+	err = svc.DeleteById(ctx, res.Id)
 
 	assert.Equal(t, err, nil)
+	permission, err := svc.ReadById(ctx, res.Id)
+
+	appErr := customErrors.NewAppError(pkgErr.Wrap(errors.New("record not found"), selectError), customErrors.DatabaseError)
+	assert.Equal(t, err.Error(), appErr.Error())
+	assert.Equal(t, permission, nil)
 }

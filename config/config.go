@@ -123,6 +123,7 @@ func ChangeEnv(envFileName string) string {
 }
 
 func Reload() *Config {
+
 	env.CheckDotEnv(envFile)
 	environment := env.MustGet("ENV")
 	if environment == "prod" {

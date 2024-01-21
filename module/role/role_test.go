@@ -2,6 +2,9 @@ package role
 
 import (
 	"context"
+	"errors"
+	customErrors "github.com/ericmarcelinotju/gram/errors"
+	pkgErr "github.com/pkg/errors"
 	"testing"
 
 	"github.com/ericmarcelinotju/gram/config"
@@ -32,9 +35,8 @@ func TestReadUserHandler(t *testing.T) {
 		SortDto:       nil,
 	})
 
-	assert.NotEqual(t, err, nil)
-	assert.Equal(t, total, 0)
-	assert.Equal(t, len(res), total)
+	assert.Equal(t, err, nil)
+	assert.Equal(t, len(res), int(total))
 }
 
 func TestReadWithPaginationUserHandler(t *testing.T) {
@@ -50,9 +52,10 @@ func TestReadWithPaginationUserHandler(t *testing.T) {
 		},
 	})
 
-	assert.NotEqual(t, err, nil)
-	assert.Equal(t, total, 0)
-	assert.Equal(t, len(res), totalPerPage)
+	assert.Equal(t, err, nil)
+	if int(total) > totalPerPage {
+		assert.Equal(t, len(res), totalPerPage)
+	}
 }
 
 func TestCreateUserHandler(t *testing.T) {
@@ -65,47 +68,66 @@ func TestCreateUserHandler(t *testing.T) {
 
 	res, err := svc.Create(ctx, &payload)
 
-	assert.NotEqual(t, err, nil)
+	assert.Equal(t, err, nil)
 	assert.Equal(t, res.Name, payload.Name)
 }
 
 func TestUpdateUserHandler(t *testing.T) {
 	ctx, svc := setupService()
+	name := "testing"
+	res, total, err := svc.Read(ctx, &dto.GetRoleDto{
+		Name:          &name,
+		PaginationDto: nil,
+		SortDto:       nil,
+	})
+	assert.NotEqual(t, total, 0)
 
 	payload := dto.PutRoleDto{
-		Id:          "asdasdasd",
+		Id:          res[0].Id,
 		Name:        "testing-updated",
 		Description: "testing@gmail.com",
 	}
 
-	res, err := svc.Update(ctx, &payload)
+	role, err := svc.Update(ctx, &payload)
 
-	assert.NotEqual(t, err, nil)
-	assert.Equal(t, res.Id, payload.Id)
-	assert.Equal(t, res.Name, payload.Name)
+	assert.Equal(t, err, nil)
+	assert.Equal(t, role.Id, payload.Id)
+	assert.Equal(t, role.Name, payload.Name)
 }
 
 func TestReadByIdUserHandler(t *testing.T) {
 	ctx, svc := setupService()
+	name := "testing-updated"
+	res, total, err := svc.Read(ctx, &dto.GetRoleDto{
+		Name:          &name,
+		PaginationDto: nil,
+		SortDto:       nil,
+	})
+	assert.NotEqual(t, total, 0)
 
-	id := "asdasdasd"
-
-	res, err := svc.ReadById(ctx, id)
+	role, err := svc.ReadById(ctx, res[0].Id)
 
 	assert.Equal(t, err, nil)
-	assert.Equal(t, res.Id, id)
+	assert.Equal(t, role.Id, res[0].Id)
 }
 
 func TestDeleteUserHandler(t *testing.T) {
 	ctx, svc := setupService()
 
-	id := "aasdasdasd"
+	name := "testing-updated"
+	res, total, err := svc.Read(ctx, &dto.GetRoleDto{
+		Name:          &name,
+		PaginationDto: nil,
+		SortDto:       nil,
+	})
+	assert.NotEqual(t, total, 0)
 
-	err := svc.DeleteById(ctx, id)
-
-	assert.NotEqual(t, err, nil)
-
-	_, err = svc.ReadById(ctx, id)
+	err = svc.DeleteById(ctx, res[0].Id)
 
 	assert.Equal(t, err, nil)
+
+	_, err = svc.ReadById(ctx, res[0].Id)
+	appErr := customErrors.NewAppError(pkgErr.Wrap(errors.New("record not found"), selectError), customErrors.DatabaseError)
+
+	assert.Equal(t, err.Error(), appErr.Error())
 }

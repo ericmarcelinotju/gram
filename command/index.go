@@ -4,6 +4,8 @@ import (
 	"context"
 	"flag"
 	"fmt"
+	"github.com/ericmarcelinotju/gram/config"
+	"github.com/ericmarcelinotju/gram/plugins/database"
 	"os"
 	"time"
 
@@ -27,7 +29,16 @@ func ProcessCommands(db *gorm.DB) {
 	cmdUser := flag.String("u", "", "Create super user")
 	cmdMigrate := flag.Bool("m", false, "Migrate tables")
 	cmdSeeding := flag.Bool("s", false, "Seeding Init Value")
+	cmdIsTesting := flag.Bool("t", false, "Is Testing Environtment")
 	flag.Parse()
+	if *cmdIsTesting {
+		config.ChangeEnv(".env.test")
+		configuration := config.Reload()
+		newDB, err := database.Connect(configuration.Database)
+		if err == nil {
+			db = newDB
+		}
+	}
 
 	if cmdUser != nil && len(*cmdUser) > 0 {
 		userRepo := userModule.NewRepository(db, nil, nil)
