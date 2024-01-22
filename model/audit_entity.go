@@ -1,10 +1,10 @@
 package model
 
 import (
+	uuid "github.com/satori/go.uuid"
 	"time"
 
 	"github.com/ericmarcelinotju/gram/dto"
-	"github.com/google/uuid"
 )
 
 // AuditEntity struct defines the database model for a audit.
@@ -28,9 +28,9 @@ func (AuditEntity) TableName() string {
 }
 
 func NewAuditEntity(dto *dto.AuditDto) *AuditEntity {
-	id, _ := uuid.Parse(dto.ID)
-	userId, _ := uuid.Parse(dto.UserID)
-	permissionID, _ := uuid.Parse(dto.PermissionID)
+	id, _ := uuid.FromString(dto.ID)
+	userId, _ := uuid.FromString(dto.UserID)
+	permissionID, _ := uuid.FromString(dto.PermissionID)
 
 	return &AuditEntity{
 		Id:            id,

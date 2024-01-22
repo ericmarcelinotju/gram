@@ -1,5 +1,5 @@
-PROJECT_NAME := "doppler"
-PKG := "gitlab.com/datis/$(PROJECT_NAME)"
+PROJECT_NAME := "gram"
+PKG := "github.com/ericmarcelinotju/$(PROJECT_NAME)"
 PKG_LIST := $(shell go list ${PKG}/... | grep -v /vendor/)
 GO_FILES := $(shell find . -name '*.go' | grep -v /vendor/ | grep -v _test.go)
 
@@ -11,6 +11,10 @@ lint: ## Lint the files
 	@golint -set_exit_status ${PKG_LIST}
 
 test: ## Run unittests
+	@rm gram_db
+	@touch gram_db
+	@go run main.go -m -t
+	@go run main.go -s -t
 	@go test -short ${PKG_LIST}
 
 race: dep ## Run data race detector

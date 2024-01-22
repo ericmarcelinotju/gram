@@ -2,9 +2,8 @@ package websocket
 
 import (
 	"errors"
+	uuid "github.com/satori/go.uuid"
 	"log"
-
-	"github.com/google/uuid"
 )
 
 // Message wraps the relevant information needed to broadcast a message

@@ -2,14 +2,14 @@ package model
 
 import (
 	"encoding/json"
+	uuid "github.com/satori/go.uuid"
 	"time"
 
-	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
 
 type Model struct {
-	Id        uuid.UUID `gorm:"type:uuid;default:uuid_generate_v4()"`
+	Id        uuid.UUID `gorm:"type:uuid;default:(uuid_generate_v4())"`
 	CreatedAt time.Time
 	UpdatedAt time.Time
 }
@@ -37,7 +37,7 @@ func (m *Model) BeforeCreate(tx *gorm.DB) error {
 	newValue, _ := json.Marshal(tx.Statement.Dest)
 
 	tx.Model(&AuditEntity{}).Create(&AuditEntity{
-		Id:            uuid.New(),
+		Id:            uuid.NewV4(),
 		OperationType: "insert",
 		EntityName:    tx.Statement.Table,
 		EntityId:      m.Id.String(),
@@ -78,7 +78,7 @@ func (m *Model) BeforeUpdate(tx *gorm.DB) error {
 	newValue, _ := json.Marshal(tx.Statement.Dest)
 
 	tx.Model(&AuditEntity{}).Create(&AuditEntity{
-		Id:            uuid.New(),
+		Id:            uuid.NewV4(),
 		OperationType: "update",
 		EntityName:    tx.Statement.Table,
 		EntityId:      m.Id.String(),
@@ -111,7 +111,7 @@ func (m *Model) BeforeDelete(tx *gorm.DB) error {
 	}
 
 	tx.Model(&AuditEntity{}).Create(&AuditEntity{
-		Id:            uuid.New(),
+		Id:            uuid.NewV4(),
 		OperationType: "delete",
 		EntityName:    tx.Statement.Table,
 		EntityId:      m.Id.String(),

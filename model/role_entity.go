@@ -1,10 +1,10 @@
 package model
 
 import (
+	uuid "github.com/satori/go.uuid"
 	"time"
 
 	"github.com/ericmarcelinotju/gram/dto"
-	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
 
@@ -42,7 +42,7 @@ func NewRoleEntity(entity *dto.RoleDto) *RoleEntity {
 		permissions[i] = *NewPermissionEntity(&permission)
 	}
 
-	id, _ := uuid.Parse(entity.Id)
+	id, _ := uuid.FromString(entity.Id)
 
 	return &RoleEntity{
 		Model: Model{

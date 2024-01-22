@@ -111,8 +111,20 @@ func HandleLogFile() {
 var Instance *Config
 
 // NewConfig creates a new Config struct
-func NewConfig() *Config {
-	env.CheckDotEnv()
+func NewConfig(envFileName string) *Config {
+	envFile = envFileName
+	config := Reload()
+	return config
+}
+
+func ChangeEnv(envFileName string) string {
+	envFile = envFileName
+	return envFile
+}
+
+func Reload() *Config {
+
+	env.CheckDotEnv(envFile)
 	environment := env.MustGet("ENV")
 	if environment == "prod" {
 		gin.SetMode(gin.ReleaseMode)
@@ -157,7 +169,7 @@ func NewConfig() *Config {
 			Instance: env.Get("DB_INSTANCE"),
 			User:     env.MustGet("DB_USER"),
 			DB:       env.MustGet("DB_NAME"),
-			Password: env.MustGet("DB_PASSWORD"),
+			Password: env.Get("DB_PASSWORD"),
 		},
 		Cache: &Cache{
 			Driver:        env.MustGet("CACHE_DRIVER"),
@@ -182,10 +194,11 @@ func NewConfig() *Config {
 
 var configInstance *Config
 var once sync.Once
+var envFile = ".env"
 
 func Get() *Config {
 	once.Do(func() {
-		configInstance = NewConfig()
+		configInstance = NewConfig(envFile)
 	})
 
 	return configInstance

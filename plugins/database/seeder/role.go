@@ -2,7 +2,7 @@ package seeder
 
 import (
 	"github.com/ericmarcelinotju/gram/model"
-	"github.com/google/uuid"
+	uuid "github.com/satori/go.uuid"
 	"gorm.io/gorm"
 )
 
@@ -44,13 +44,13 @@ func (s *RoleSeederService) Seed() error {
 	}
 	seedDatas := []model.RoleEntity{
 		{
-			Model:       model.Model{Id: uuid.New()},
+			Model:       model.Model{Id: uuid.NewV4()},
 			Name:        "Super Admin",
 			Description: "Super Administrator",
 			Permissions: permissions,
 		},
 		{
-			Model:       model.Model{Id: uuid.New()},
+			Model:       model.Model{Id: uuid.NewV4()},
 			Name:        "Admin",
 			Description: "Administrator",
 			Permissions: adminPermissions,

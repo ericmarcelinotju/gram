@@ -2,7 +2,7 @@ package model
 
 import (
 	"github.com/ericmarcelinotju/gram/dto"
-	"github.com/google/uuid"
+	uuid "github.com/satori/go.uuid"
 )
 
 // PermissionEntity struct defines the database model for a permission.
@@ -18,7 +18,7 @@ func (PermissionEntity) PermissionEntity() string {
 }
 
 func NewPermissionEntity(dto *dto.PermissionDto) *PermissionEntity {
-	id, _ := uuid.Parse(dto.Id)
+	id, _ := uuid.FromString(dto.Id)
 
 	return &PermissionEntity{
 		Model: Model{

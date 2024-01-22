@@ -1,10 +1,10 @@
 package model
 
 import (
+	uuid "github.com/satori/go.uuid"
 	"time"
 
 	"github.com/ericmarcelinotju/gram/dto"
-	"github.com/google/uuid"
 )
 
 // UserEntity struct defines the database model for an user.
@@ -30,8 +30,8 @@ func (UserEntity) TableName() string {
 }
 
 func NewUserEntity(entity *dto.UserDto) *UserEntity {
-	id, _ := uuid.Parse(entity.Id)
-	roleId, _ := uuid.Parse(entity.RoleId)
+	id, _ := uuid.FromString(entity.Id)
+	roleId, _ := uuid.FromString(entity.RoleId)
 
 	user := &UserEntity{
 		Model: Model{
